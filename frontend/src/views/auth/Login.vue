@@ -5,11 +5,29 @@ import BaseInput from '@/components/Forms/BaseInput.vue';
 import { ref } from 'vue';
 import BaseButton from '@/components/Forms/BaseButton.vue';
 import { useI18n } from '@/locales/i18n';
+import apiClient, { ApiError } from '@/Utilities/MakePetition';
 
 const { t } = useI18n()
 
 const username = ref<string>("");
 const password = ref<string>("");
+
+const handleLogin = async () => {
+    const loginData = {
+        username: username.value,
+        password: password.value
+    }
+
+    console.log("Trying to login with data:");
+    console.log(loginData)
+
+    try {
+        const response = await apiClient.post('/login', loginData)
+        console.log('Responded:', response.data)
+    } catch (error) {
+        console.error('Failed to login', error)
+    }
+}
 </script>
 
 <template>
@@ -25,7 +43,7 @@ const password = ref<string>("");
                         <h1 class="ServiceText"> Root Pulse </h1>
                     </div>
 
-                    <form>
+                    <form  @submit.prevent="handleLogin">
                         <div class="FormInput">
                             <h2 class="FormText"> {{ t("auth.username") }} </h2>
                             <BaseInput
@@ -39,11 +57,12 @@ const password = ref<string>("");
                             <BaseInput
                                 v-model="password"
                                 :placeholder="t('auth.password')"
+                                type="password"
                             />
                         </div>
 
                         <div class="FormInput">
-                            <BaseButton block variant="primary">{{t("auth.login")}}</BaseButton>
+                            <BaseButton type="submit" block variant="primary">{{t("auth.login")}}</BaseButton>
                         </div>
                     </form>
                 </div>

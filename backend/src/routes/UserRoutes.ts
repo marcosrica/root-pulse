@@ -4,7 +4,7 @@ import createNewAccount from './user/CreateAccount';
 
 const UserRoutes = Router();
 
-UserRoutes.get('/login', userLogin);
+UserRoutes.post('/login', userLogin);
 UserRoutes.get('/newAccount', createNewAccount);
 
 export default UserRoutes;
