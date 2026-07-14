@@ -70,6 +70,16 @@ const togglePasswordVisibility = () => {
 
 <template>
   <div class="input-wrapper">
+    <!-- Label -->
+    <label 
+      v-if="label" 
+      :for="inputId" 
+      class="input-label"
+    >
+      {{ label }}
+      <span v-if="required" class="required-star">*</span>
+    </label>
+
     <!-- Input Container -->
     <div 
       class="input-container"
@@ -91,7 +101,7 @@ const togglePasswordVisibility = () => {
       <input
         :id="inputId"
         ref="inputRef"
-        :type="type"
+        :type="showPassword ? 'text' : type"
         :value="modelValue"
         :placeholder="placeholder"
         :disabled="disabled"
@@ -101,7 +111,7 @@ const togglePasswordVisibility = () => {
         class="input-field"
         :class="{
           'has-left-icon': $slots.leftIcon || leftIcon,
-          'has-right-icon': $slots.rightIcon || rightIcon || showPasswordToggle
+          'has-right-icon': $slots.rightIcon || rightIcon || showPasswordToggle || (clearable && modelValue)
         }"
         @input="handleInput"
         @focus="isFocused = true"
@@ -116,8 +126,8 @@ const togglePasswordVisibility = () => {
         @click="togglePasswordVisibility"
         :aria-label="showPassword ? 'Hide password' : 'Show password'"
       >
-        <EyeIcon v-if="!showPassword" class="icon" />
-        <EyeOffIcon v-else class="icon" />
+        <Eye v-if="!showPassword" class="icon" />
+        <EyeOff v-else class="icon" />
       </button>
 
       <!-- Right Icon -->
@@ -135,14 +145,14 @@ const togglePasswordVisibility = () => {
         @click="clearInput"
         aria-label="Clear input"
       >
-        <XIcon class="icon" />
+        <X class="icon" />
       </button>
     </div>
 
     <!-- Helper Text / Error Message -->
     <div v-if="helperText || error" class="input-message">
-      <AlertCircleIcon v-if="error" class="message-icon error-icon" />
-      <CheckCircleIcon v-else-if="success" class="message-icon success-icon" />
+      <AlertCircle v-if="error" class="message-icon error-icon" />
+      <CheckCircle v-else-if="success" class="message-icon success-icon" />
       <span :class="{ 'text-error': error, 'text-success': success }">
         {{ error || helperText }}
       </span>
@@ -150,7 +160,7 @@ const togglePasswordVisibility = () => {
 
     <!-- Character Count -->
     <div v-if="maxlength" class="char-count">
-      {{ modelValue?.length || 0 }}/{{ maxlength }}
+      {{ String(modelValue || '').length }}/{{ maxlength }}
     </div>
   </div>
 </template>
@@ -168,7 +178,7 @@ const togglePasswordVisibility = () => {
 .input-label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--text-secondary);
+  color: var(--main-text-color);
   transition: var(--transition-theme);
 }
 
@@ -185,7 +195,7 @@ const togglePasswordVisibility = () => {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid var(--div-border);
   border-radius: 0.75rem;
   transition: all 0.3s ease;
   overflow: hidden;
@@ -194,12 +204,11 @@ const togglePasswordVisibility = () => {
 /* Dark mode adjustments */
 [data-theme="dark"] .input-container {
   background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Focus State */
 .input-focused {
-  border-color: var(--color-primary, #2D8A4E);
+  border-color: var(--btn-primary-bg, #2D8A4E);
   box-shadow: 
     0 0 0 3px rgba(45, 138, 78, 0.15),
     0 4px 16px rgba(0, 0, 0, 0.1);
@@ -210,12 +219,6 @@ const togglePasswordVisibility = () => {
 .input-error {
   border-color: #FF6B6B;
   box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
-}
-
-/* Success State */
-.input-error:not(.input-error) .input-focused {
-  border-color: #6BCB77;
-  box-shadow: 0 0 0 3px rgba(107, 203, 119, 0.1);
 }
 
 /* Disabled State */
@@ -234,13 +237,13 @@ const togglePasswordVisibility = () => {
   border: none;
   outline: none;
   font-size: 0.9375rem;
-  color: var(--text-primary);
+  color: var(--main-text-color);
   transition: var(--transition-theme);
 }
 
 .input-field::placeholder {
-  color: var(--text-tertiary);
-  opacity: 0.7;
+  color: var(--main-text-color);
+  opacity: 0.5;
 }
 
 .input-field:disabled {
@@ -263,7 +266,8 @@ const togglePasswordVisibility = () => {
   align-items: center;
   justify-content: center;
   padding: 0 0.75rem;
-  color: var(--text-tertiary);
+  color: var(--main-text-color);
+  opacity: 0.6;
 }
 
 .icon {
@@ -278,7 +282,8 @@ const togglePasswordVisibility = () => {
   border: none;
   padding: 0.5rem;
   cursor: pointer;
-  color: var(--text-tertiary);
+  color: var(--main-text-color);
+  opacity: 0.6;
   border-radius: 0.5rem;
   transition: all 0.2s ease;
   display: flex;
@@ -288,7 +293,7 @@ const togglePasswordVisibility = () => {
 
 .password-toggle:hover,
 .clear-button:hover {
-  color: var(--text-primary);
+  opacity: 1;
   background: rgba(255, 255, 255, 0.1);
 }
 
@@ -326,7 +331,8 @@ const togglePasswordVisibility = () => {
 /* ─── Character Count ─── */
 .char-count {
   font-size: 0.75rem;
-  color: var(--text-tertiary);
+  color: var(--main-text-color);
+  opacity: 0.6;
   text-align: right;
   margin-top: -0.25rem;
 }
