@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import BaseCard from '@/components/BaseCard.vue';
 import plantIconUrl from '@/../public/Icons/Logo.svg'
-import { Form } from 'lucide-vue-next';
 import BaseInput from '@/components/Forms/BaseInput.vue';
 import { ref } from 'vue';
+import BaseButton from '@/components/Forms/BaseButton.vue';
+import { useI18n } from '@/locales/i18n';
 
-const plantName = ref<string>("");
+const { t } = useI18n()
+
+const username = ref<string>("");
+const password = ref<string>("");
 </script>
 
 <template>
@@ -22,13 +26,25 @@ const plantName = ref<string>("");
                     </div>
 
                     <form>
-                        <BaseInput
-                            v-model="plantName" 
-                            label="Plant Name"
-                            placeholder="Enter plant name..."
-                            type="number"
+                        <div class="FormInput">
+                            <h2 class="FormText"> {{ t("auth.username") }} </h2>
+                            <BaseInput
+                                v-model="username"
+                                :placeholder="t('auth.username')"
+                            />
+                        </div>
 
-                        />
+                        <div class="FormInput">
+                            <h2 class="FormText"> {{t("auth.password")}} </h2>
+                            <BaseInput
+                                v-model="password"
+                                :placeholder="t('auth.password')"
+                            />
+                        </div>
+
+                        <div class="FormInput">
+                            <BaseButton block variant="primary">{{t("auth.login")}}</BaseButton>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -96,6 +112,17 @@ const plantName = ref<string>("");
     /* #endregion */
 
     /* #region form content*/
+    .FormText {
+        margin: 0px;
+        font-size: 1.5dvw;
 
+        @media(orientation: portrait) {
+            font-size: 8dvw;
+        }
+    }
+
+    .FormInput {
+        padding-top: 20px;
+    }
     /* #endregion */
 </style>
