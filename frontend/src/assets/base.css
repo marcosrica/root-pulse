@@ -1,7 +1,7 @@
-/* Light Mode */
+/* Light Mode (Default) */
 :root {
-  --background: gray;
-  --div-border: black;
+  --background: #FAFAFA;
+  --div-border: #000000;
   
   /* Transitions */
   --transition-theme: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
@@ -9,28 +9,28 @@
 
 /* Dark Mode */
 [data-theme="dark"] {
-  --background: black;
-  --div-border: white;
+  --background: #000000;
+  --div-border: #ffffff;
 }
 
 /* System Preference Auto-Detection */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    /* Inherits dark mode variables when system prefers dark */
-    /* This only applies if no manual theme is set */
+    --background: #000000;
+    --div-border: #ffffff;
   }
 }
 
-
 /* Apply to body for smooth transitions */
 body {
-  margin: 0px;
-  padding: 0px;
-  
+  margin: 0;
+  padding: 0;
+  background-color: var(--background);
+  color: var(--text-primary);
   transition: var(--transition-theme);
 }
 
 html {
-  margin: 0px;
-  padding: 0px;
+  margin: 0;
+  padding: 0;
 }

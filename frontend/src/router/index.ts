@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Index from '@/views/Index.vue'
+import Login from '@/views/auth/Login.vue'
 
 
 const router = createRouter({
@@ -13,7 +14,7 @@ const router = createRouter({
     {
       path: '/auth/login',
       name: 'login',
-      component: () => import('@/views/auth/Login.vue'),
+      component:Login,
     },
     /*
     {

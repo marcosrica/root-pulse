@@ -4,7 +4,7 @@
 
 <template>
     <div class="app">
-
+        <button v-on:click=""> switch </button>
     </div>
 </template>
 
