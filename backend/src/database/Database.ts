@@ -42,4 +42,25 @@ export class UsersDatabase {
       return userDbresultStatus.AllOK;
     }
   }
+
+  CheckForUser = async (name: string, hashedPassword:string): Promise<number> => {
+    const [response] = await pool.query<RowDataPacket[]>(`
+      SELECT id, password FROM users
+      WHERE username = ?
+      `, [name]);
+
+    console.log(response)
+
+    if (response.length != 1) {
+      return -1;
+    }
+    else {
+      if (response[0].password == hashedPassword) {
+        return response[0].id;
+      }
+      else {
+        return -1;
+      }
+    }
+  }
 }
