@@ -1,3 +1,5 @@
+//For creating a new table: npx knex migrate:make table_name
+
 import type { Knex } from 'knex';
 import dotenv from 'dotenv';
 
