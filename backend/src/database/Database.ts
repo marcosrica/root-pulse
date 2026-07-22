@@ -1,7 +1,7 @@
-import mysql from 'mysql2';
+import mysql, { RowDataPacket } from 'mysql2';
 
 import dotenv from 'dotenv';
-import { userDbErrors } from '../errors/UserDBerrors';
+import { userDbresultStatus } from '../errors/UserDBstatus';
 dotenv.config();
 
 const user = process.env.DB_USER;
@@ -21,17 +21,17 @@ const pool = mysql.createPool({
 }).promise();
 
 export class UsersDatabase {
-  CreateUser = async (name:string, hashedPassword:string): Promise<userDbErrors> => {
+  CreateUser = async (name:string, hashedPassword:string): Promise<userDbresultStatus> => {
     console.log("trying to add user with " + name + " and password: " + hashedPassword);
 
     //First, check if the username already exists
-    const [check] = await pool.query(`
+    const [check] = await pool.query<RowDataPacket[]>(`
       SELECT id FROM users
       WHERE username = ?
     `, [name]);
 
     if (check.length != 0) {
-      return userDbErrors.UsernameAlreadyExists;
+      return userDbresultStatus.UsernameAlreadyExists;
     }
     else {
       const [response] = await pool.query(`
@@ -39,7 +39,7 @@ export class UsersDatabase {
         VALUES(?, ?)
         `, [name, hashedPassword]);
 
-      return userDbErrors.AllOK;
+      return userDbresultStatus.AllOK;
     }
   }
 }
