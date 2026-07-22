@@ -1,4 +1,5 @@
 <script setup lang="ts">
+//Various imports
 import BaseCard from '@/components/BaseCard.vue';
 import plantIconUrl from '@/../public/Icons/Logo.svg'
 import BaseInput from '@/components/Forms/BaseInput.vue';
@@ -7,24 +8,29 @@ import BaseButton from '@/components/Forms/BaseButton.vue';
 import { useI18n } from '@/locales/i18n';
 import apiClient, { ApiError } from '@/Utilities/MakePetition';
 
+//Library for easy translation features
 const { t } = useI18n()
 
+//Username and password of the user trying to log in
 const username = ref<string>("");
 const password = ref<string>("");
 
+//Handle the login form submission
 const handleLogin = async () => {
+    //Wrap the login data in an object
     const loginData = {
         username: username.value,
         password: password.value
     }
 
-    console.log("Trying to login with data:");
-    console.log(loginData)
-
+    //Trying to contact the backend to try and log in
     try {
+        //Sending the petition
         const response = await apiClient.post('/login', loginData)
+        //Logging the response for readability
         console.log('Responded:', response.data)
     } catch (error) {
+        //Something happened along the way
         console.error('Failed to login', error)
     }
 }
