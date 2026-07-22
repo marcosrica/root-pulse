@@ -11,7 +11,8 @@
     "start": "node dist/server.js",
     "dev": "nodemon --exec tsx src/server.ts",
     "clean": "rm -rf dist",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "migrate": "knex migrate:latest"
   },
   "dependencies": {
     "cors": "^2.8.6",
