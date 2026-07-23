@@ -1,7 +1,7 @@
 <script setup lang="ts">
 //Various imports
 import BaseCard from '@/components/BaseCard.vue';
-import plantIconUrl from '@/../public/Icons/Logo.svg'
+import plantIconUrl from '@/../public/icons/Logo.svg'
 import BaseInput from '@/components/Forms/BaseInput.vue';
 import { ref } from 'vue';
 import BaseButton from '@/components/Forms/BaseButton.vue';

@@ -6,7 +6,13 @@
     <div class="background">
         <div class="sideMenuWrapper">
             <div class="sideMenu">
-                
+                <div class="menuOption">
+                    <div class="menuOptionIcon"/>
+                </div>
+
+                <div class="menuOption">
+                    <div class="menuOptionIcon"/>
+                </div>
             </div>
         </div>
         
@@ -47,15 +53,34 @@
     }
 
     .sideMenu {
+        box-sizing: border-box;
+        
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-left: 0px;
+        padding-right: 0px;
+        
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 10px;
+        
         width: 80%;
-        height: 90%;
+        max-height: 90%;
 
         border: 2px solid var(--div-border);
         border-radius: 20px;
 
         @media(orientation: portrait) {
-            width: 100%;
+            width: auto;
+            max-width: 100%;
             height: 80%;
+            flex-direction: row;
+
+            padding-top: 0px;
+            padding-bottom: 0px;
+            padding-left: 10px;
+            padding-right: 10px;
         }
     }
 
@@ -63,5 +88,32 @@
         background-color: orange;
 
         flex: 1;
+    }
+
+    .menuOption {
+        padding: 5px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .menuOptionIcon {
+        box-sizing: border-box;
+        cursor: pointer;
+        background-color: var(--div-border);
+
+        @media(orientation:portrait) {
+            height: 90%;
+            aspect-ratio: 1;
+        }   
+
+        @media(orientation: landscape) {
+            width: 90%;
+            aspect-ratio: 1;
+        }
+
+        mask-image: url('/icons/Home.svg');
+        mask-size: contain;
     }
 </style>
