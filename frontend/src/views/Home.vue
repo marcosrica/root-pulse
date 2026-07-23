@@ -4,7 +4,7 @@
 </script>
 
 <template>
-    <BasePage>
+    <BasePage location="home">
 
     </BasePage>
 </template>

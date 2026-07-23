@@ -2,6 +2,10 @@
     let props = defineProps<{
         location: string
     }>();
+
+    const changeView = (route:string) => {
+      location.href = route;
+    }
 </script>
 
 <template>
@@ -9,11 +13,11 @@
         <div class="sideMenuWrapper">
             <div class="sideMenu">
                 <div :class="['menuOption', location == 'home' ? 'glassMenuOption' : '']">
-                    <div class="menuOptionIcon homeIcon"/>
+                    <div class="menuOptionIcon homeIcon" v-on:click="changeView('/home')"/>
                 </div>
 
                 <div :class="['menuOption', location == 'profile' ? 'glassMenuOption' : '']">
-                    <div class="menuOptionIcon profileIcon"/>
+                    <div class="menuOptionIcon profileIcon" v-on:click="changeView('/profile')"/>
                 </div>
             </div>
         </div>
@@ -57,8 +61,8 @@
     .sideMenu {
         box-sizing: border-box;
         
-        padding-top: 10px;
-        padding-bottom: 10px;
+        padding-top: 2px;
+        padding-bottom: 2px;
         padding-left: 0px;
         padding-right: 0px;
         
@@ -71,7 +75,7 @@
         max-height: 90%;
 
         border: 2px solid var(--div-border);
-        border-radius: 20px;
+        border-radius: 100px;
 
         @media(orientation: portrait) {
             width: auto;
@@ -81,8 +85,8 @@
 
             padding-top: 0px;
             padding-bottom: 0px;
-            padding-left: 10px;
-            padding-right: 10px;
+            padding-left: 2px;
+            padding-right: 2px;
         }
     }
 
@@ -98,10 +102,27 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        
+        box-sizing: border-box;
+        margin: 2px;
+        border-radius: 1000px;
+
+        backdrop-filter: blur(40px);
     }
 
     .glassMenuOption {
-        background-color: red;
+        ackdrop-filter: blur(12px) saturate(180%);
+        background: radial-gradient(
+            circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+            rgba(255, 255, 255, 0.25) 0%,
+            rgba(255, 255, 255, 0.05) 60%,
+            rgba(255, 255, 255, 0.02) 100%
+        );
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow:
+            0 15px 35px rgba(0, 0, 0, 0.3),
+            0 0 0 0.5px rgba(255, 255, 255, 0.1) inset,
+            0 0 20px rgba(255, 255, 255, 0.2);
     }
     
     .menuOptionIcon {
