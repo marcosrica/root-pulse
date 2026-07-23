@@ -9,3 +9,4 @@ auth.passwordsDontMatch,Passwords must match,Las constraseñas deben coincidir
 auth.noEmptyFields,You shall fill all the fields,Recuerde rellenar todos los campos
 home.welcomeBack,Welcome back!,¡Bienvenido de nuevo!
 home.checkSensors,Check your plants,Vigila tus plantas
+home.checkAll,Check all,Comprobar todas las plantas
