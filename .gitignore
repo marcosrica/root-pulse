@@ -46,3 +46,5 @@ frontend/__screenshots__/
 frontend/*.timestamp-*-*.mjs
 
 frontend/.vscode/
+
+frontend/.env
