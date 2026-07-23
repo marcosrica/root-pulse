@@ -11,32 +11,58 @@ import apiClient, { ApiError } from '@/Utilities/MakePetition';
 //Library for easy translation features
 const { t } = useI18n()
 
-//Username and password of the user trying to log in
+//Username and password of the new account
 const username = ref<string>("");
 const password = ref<string>("");
+const confirmPassword = ref<string>("");
 
-//Handle the login form submission
-const handleLogin = async () => {
+//Track wether passwords match
+const passwordsMatch = ref<boolean>(true);
+const emptyFields = ref<boolean>(false);
+
+//Handle a change in the passwords
+const passwordsChanged = () => {
+    if (password.value != "" && confirmPassword.value != "") {
+        passwordsMatch.value = (password.value == confirmPassword.value);
+    }
+    else {
+      passwordsMatch.value = true;
+    }
+}
+
+//Handle the account creation form submission
+const handleCreateAccount = async () => {
     //Wrap the login data in an object
-    const loginData = {
+    const accountData = {
         username: username.value,
         password: password.value
     }
 
-    //Trying to contact the backend to try and log in
-    try {
-        //Sending the petition
-        const response = await apiClient.post('/user/login', loginData);
+    //Checking for null values
+    if (username.value != "" && password.value != "" && confirmPassword.value != "") {
+        emptyFields.value = false;
+        
+        //Checking if the passwords match
+        if (passwordsMatch.value) {
+            //Trying to call the backend
+            try {
+                const response = await apiClient.post("/user/newAccount", accountData);
 
-        if (response.status == 200) {
-            //Everything went on fine, and user was logged in
-            //Redirecting to home
-            location.href = "/home";
+                //Checking if everything went through fine
+              if (response.status == 200) {
+                    //Redirecting to the home page
+                    location.href = "/home";
+                }
+            }
+            catch {
+              
+            }
         }
-    } catch (error) {
-        //Something happened along the way
-        console.error('Failed to login', error)
     }
+    else {
+        emptyFields.value = true;
+    }
+    
 }
 </script>
 
@@ -47,13 +73,21 @@ const handleLogin = async () => {
                 <div class="Logo">
                     <img class="LogoSVG" :src="plantIconUrl"></img>
                 </div>
-
+                
                 <div class="Form">
                     <div class="ServiceName">
-                        <h1 class="ServiceText"> Root Pulse </h1>
+                        <h1 class="ServiceText"> {{t("auth.createAccount")}} </h1>
                     </div>
 
-                    <form  @submit.prevent="handleLogin">
+                    <BaseCard class="Error" v-if="!passwordsMatch">
+                        <p class="errorText"> {{t("auth.passwordsDontMatch")}} </p>
+                    </BaseCard>
+                    
+                    <BaseCard class="Error" v-if="emptyFields">
+                        <p class="errorText"> {{t("auth.noEmptyFields")}} </p>
+                    </BaseCard>
+                    
+                    <form  @submit.prevent="handleCreateAccount">
                         <div class="FormInput">
                             <h2 class="FormText"> {{ t("auth.username") }} </h2>
                             <BaseInput
@@ -68,11 +102,22 @@ const handleLogin = async () => {
                                 v-model="password"
                                 :placeholder="t('auth.password')"
                                 type="password"
+                                :changed="passwordsChanged"
                             />
                         </div>
 
                         <div class="FormInput">
-                            <BaseButton type="submit" block variant="primary">{{t("auth.login")}}</BaseButton>
+                            <h2 class="FormText"> {{t("auth.confirmPassword")}} </h2>
+                            <BaseInput
+                                v-model="confirmPassword"
+                                :placeholder="t('auth.confirmPassword')"
+                                type="password"
+                                :changed="passwordsChanged"
+                            />
+                        </div>
+
+                        <div class="FormInput">
+                            <BaseButton type="submit" block variant="primary">{{t("auth.createAccount")}}</BaseButton>
                         </div>
                     </form>
                 </div>
@@ -104,6 +149,16 @@ const handleLogin = async () => {
         }
     }
 
+    .errorText {
+        text-align: center;
+        margin: 0px;
+        font-size: 1.5dvw;
+
+        @media(orientation: portrait) {
+            font-size: 4dvw;
+        }
+    }
+
     /* #region service name */
     .ServiceName {
         border-bottom: 0.5dvw solid var(--div-border);
@@ -111,10 +166,10 @@ const handleLogin = async () => {
 
     .ServiceText {
         margin: 0px;
-        font-size: 8dvw;
+        font-size: 6dvw;
 
         @media(orientation: portrait) {
-            font-size: 18dvw;
+            font-size: 12dvw;
         }
     }
     /* #endregion */
@@ -136,13 +191,18 @@ const handleLogin = async () => {
         height: 50%;
 
         @media(orientation: portrait) {
-            width: 80%;
+            width: 60%;
         }
     }
 
     .LogoSVG {
         width: 100%;
         height: 100%;
+    }
+
+    .Error {
+        background-color: #ff5c5cb8;
+        margin-top: 10px;
     }
     /* #endregion */
 

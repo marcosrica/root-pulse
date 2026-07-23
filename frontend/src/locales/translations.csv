@@ -1,4 +1,9 @@
 key,en,es
-auth.login,Login,Iniciar sesión
+auth.login,Log in,Iniciar sesión
 auth.username,Username,Nombre de usuario
 auth.password,Password,Contraseña
+auth.createAccount,Create account, Crear cuenta
+auth.confirmPassword,Confirm password,Confirmar contraseña
+auth.createAccount,Create account,Crear cuenta
+auth.passwordsDontMatch,Passwords must match,Las constraseñas deben coincidir
+auth.noEmptyFields,You shall fill all the fields,Recuerde rellenar todos los campos

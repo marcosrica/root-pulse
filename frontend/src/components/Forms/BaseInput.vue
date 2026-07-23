@@ -19,6 +19,7 @@ const props = withDefaults(defineProps<{
   autocomplete?: string
   leftIcon?: any
   rightIcon?: any
+  changed?: () => void
 }>(), {
   type: 'text',
   placeholder: '',
@@ -108,6 +109,7 @@ const togglePasswordVisibility = () => {
         :required="required"
         :maxlength="maxlength"
         :autocomplete="autocomplete"
+        v-on:change="changed"
         class="input-field"
         :class="{
           'has-left-icon': $slots.leftIcon || leftIcon,

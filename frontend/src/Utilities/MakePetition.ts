@@ -16,7 +16,7 @@ interface ApiResponse<T = unknown> {
 }
 
 // Base url
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/user'
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
 
 // ─── Helper: Build URL with query params ───
 function buildUrl(url: string, params?: Record<string, string | number | boolean | undefined>): string {
