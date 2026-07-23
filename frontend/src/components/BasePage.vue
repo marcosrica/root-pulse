@@ -23,7 +23,9 @@
         </div>
         
         <div class="content">
-            <slot></slot>
+            <div class="scrollable">
+                <slot></slot>
+            </div>
         </div>
     </div>
 </template>
@@ -91,9 +93,23 @@
     }
 
     .content {
-        background-color: orange;
-
         flex: 1;
+
+        display: flex;
+        flex-direction:column;
+        justify-content: flex-start;
+        align-items: center;
+
+        overflow: auto;
+    }
+
+    .scrollable {
+        width: 90%;
+        max-width: 1000px;
+        height: 2000px;
+
+        margin-top: 20px;
+        margin-bottom: 20px;
     }
 
     .menuOption {
@@ -111,7 +127,7 @@
     }
 
     .glassMenuOption {
-        ackdrop-filter: blur(12px) saturate(180%);
+        backdrop-filter: blur(12px) saturate(180%);
         background: radial-gradient(
             circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
             rgba(255, 255, 255, 0.25) 0%,
