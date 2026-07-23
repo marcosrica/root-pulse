@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   width="800px"
+   height="800px"
+   viewBox="0 0 20 20"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="Profile.svg"
+   inkscape:version="1.4.4 (dcaf3e7d9e, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.53125"
+     inkscape:cx="251.29412"
+     inkscape:cy="613.64706"
+     inkscape:window-width="1920"
+     inkscape:window-height="1020"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1" />
+  <title
+     id="title1">profile_round [#1342]</title>
+  <desc
+     id="desc1">Created with Sketch.</desc>
+  <defs
+     id="defs1" />
+  <g
+     id="Page-1"
+     stroke="none"
+     stroke-width="1"
+     fill="none"
+     fill-rule="evenodd"
+     style="fill:none;stroke:#000000;stroke-width:1.51181"
+     transform="matrix(0.81352736,0,0,0.81351418,0.99037313,0.98652098)">
+    <g
+       id="Dribbble-Light-Preview"
+       transform="translate(-140,-2159)"
+       fill="#000000"
+       style="fill:none;stroke:#000000;stroke-width:1.51181">
+      <g
+         id="icons"
+         transform="translate(56,160)"
+         style="fill:none;stroke:#000000;stroke-width:1.51181">
+        <path
+           d="m 103.95567,2016.636 c -0.74211,-3.359 -3.06341,-5.838 -6.118648,-6.963 1.618983,-1.277 2.563218,-3.342 2.216148,-5.603 -0.402193,-2.623 -2.62957,-4.722 -5.318348,-5.028 -3.711615,-0.423 -6.85975,2.407 -6.85975,5.958 0,1.89 0.894218,3.574 2.288625,4.673 -3.056264,1.125 -5.376533,3.604 -6.119673,6.963 -0.26949,1.221 0.734973,2.364 2.009948,2.364 h 15.891758 c 1.27599,0 2.28046,-1.143 2.00994,-2.364"
+           id="profile_round-[#1342]"
+           style="fill:none;stroke:#000000;stroke-width:1.51181"
+           sodipodi:nodetypes="ccccsccssc" />
+      </g>
+    </g>
+  </g>
+</svg>
