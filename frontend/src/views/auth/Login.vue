@@ -93,8 +93,14 @@ const handleLogin = async () => {
     }
 
     .wrapper {
+        backdrop-filter: blur(50px) saturate(4);
+    
         @media(orientation: portrait) {
             max-width: 90%;
+
+            @media(min-width: 600px) {
+            max-width: 70%;
+            }
         }
     }
 
