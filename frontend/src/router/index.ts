@@ -3,6 +3,7 @@ import Index from '@/views/Index.vue'
 import Login from '@/views/auth/Login.vue'
 import CreateAccount from '@/views/auth/CreateAccount.vue'
 import Home from '@/views/Home.vue'
+import Profile from '@/views/Profile.vue'
 
 
 const router = createRouter({
@@ -27,6 +28,11 @@ const router = createRouter({
       path: '/home',
       name: 'home',
       component: Home,
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: Profile,
     },
     /*
     {
