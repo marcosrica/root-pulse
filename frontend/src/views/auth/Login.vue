@@ -26,9 +26,13 @@ const handleLogin = async () => {
     //Trying to contact the backend to try and log in
     try {
         //Sending the petition
-        const response = await apiClient.post('/login', loginData)
-        //Logging the response for readability
-        console.log('Responded:', response.data)
+        const response = await apiClient.post('/login', loginData);
+
+        if (response.status == 200) {
+            //Everything went on fine, and user was logged in
+            //Redirecting to home
+            location.href = "/home";
+        }
     } catch (error) {
         //Something happened along the way
         console.error('Failed to login', error)
