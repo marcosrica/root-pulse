@@ -83,7 +83,7 @@ const handleLogin = async () => {
 
 <style>
     .app {
-        background: linear-gradient(307deg, #0bff00, #0004fe);;
+        background: linear-gradient(307deg, #0004fe, #0bff00);;
         width: 100dvw;
         height: 100dvh;
 
