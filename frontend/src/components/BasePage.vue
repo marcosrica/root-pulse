@@ -110,6 +110,10 @@
 
         margin-top: 20px;
         margin-bottom: 20px;
+
+        @media(orientation: portrait) {
+            width: 95%;
+        }
     }
 
     .menuOption {
