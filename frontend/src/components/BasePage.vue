@@ -1,17 +1,19 @@
 <script setup lang="ts">
-
+    let props = defineProps<{
+        location: string
+    }>();
 </script>
 
 <template>
     <div class="background">
         <div class="sideMenuWrapper">
             <div class="sideMenu">
-                <div class="menuOption">
-                    <div class="menuOptionIcon"/>
+                <div :class="['menuOption', location == 'home' ? 'glassMenuOption' : '']">
+                    <div class="menuOptionIcon homeIcon"/>
                 </div>
 
-                <div class="menuOption">
-                    <div class="menuOptionIcon"/>
+                <div :class="['menuOption', location == 'profile' ? 'glassMenuOption' : '']">
+                    <div class="menuOptionIcon profileIcon"/>
                 </div>
             </div>
         </div>
@@ -97,6 +99,10 @@
         align-items: center;
         justify-content: center;
     }
+
+    .glassMenuOption {
+        background-color: red;
+    }
     
     .menuOptionIcon {
         box-sizing: border-box;
@@ -112,8 +118,15 @@
             width: 90%;
             aspect-ratio: 1;
         }
-
-        mask-image: url('/icons/Home.svg');
+        
         mask-size: contain;
+    }
+
+    .homeIcon {
+        mask-image: url('/icons/Home.svg');
+    }
+
+    .profileIcon {
+        mask-image: url('/icons/Profile.svg');
     }
 </style>
