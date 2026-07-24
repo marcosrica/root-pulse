@@ -1,4 +1,5 @@
 key,en,es
+
 auth.login,Log in,Iniciar sesión
 auth.username,Username,Nombre de usuario
 auth.password,Password,Contraseña
@@ -7,14 +8,21 @@ auth.confirmPassword,Confirm password,Confirmar contraseña
 auth.createAccount,Create account,Crear cuenta
 auth.passwordsDontMatch,Passwords must match,Las constraseñas deben coincidir
 auth.noEmptyFields,You shall fill all the fields,Recuerde rellenar todos los campos
+
 home.welcomeBack,Welcome back!,¡Bienvenido de nuevo!
 home.checkSensors,Check your plants,Vigila tus plantas
 home.checkAll,Check all,Comprobar todas las plantas
 home.addPlant,Add a new plant,Añadir una planta nueva
 home.sensorName,Sensor name,Nombre del sensor
 home.sensorPassword,Sensor password,Contraseña del sensor
+
 profile.configuration,Configuration,Configuración
+profile.sensors,Sensors,Sensores
+profile.name,Name,Nombre
+profile.alias,Alias,Alias
+
 conf.theme,Theme,Tema
 conf.language,Language,Idioma
+
 theme.dark,Dark,Oscuro
 theme.light,Light,Claro
