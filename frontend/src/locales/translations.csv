@@ -13,3 +13,8 @@ home.checkAll,Check all,Comprobar todas las plantas
 home.addPlant,Add a new plant,Añadir una planta nueva
 home.sensorName,Sensor name,Nombre del sensor
 home.sensorPassword,Sensor password,Contraseña del sensor
+profile.configuration,Configuration,Configuración
+conf.theme,Theme,Tema
+conf.language,Language,Idioma
+theme.dark,Dark,Oscuro
+theme.light,Light,Claro
