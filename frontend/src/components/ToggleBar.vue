@@ -50,25 +50,17 @@ const select = (value: string) => {
 
 /* Glass pill indicator – inherits the look of your glassMenuOption */
 .indicator {
-  position: absolute;
-  top: 2px;
-  bottom: 2px;
-  left: 2px;
-  border-radius: 100px;
-  backdrop-filter: blur(12px) saturate(180%);
-  background: radial-gradient(
-    circle at 50% 50%,
-    rgba(255, 255, 255, 0.25) 0%,
-    rgba(255, 255, 255, 0.05) 60%,
-    rgba(255, 255, 255, 0.02) 100%
-  );
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow:
-    0 15px 35px rgba(0, 0, 0, 0.3),
-    0 0 0 0.5px rgba(255, 255, 255, 0.1) inset,
-    0 0 20px rgba(255, 255, 255, 0.2);
-  z-index: 0;
-  transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+    position: absolute;
+      top: 2px;
+      bottom: 2px;
+      left: 2px;
+      border-radius: 100px;
+      backdrop-filter: blur(12px) saturate(180%);
+      background: var(--glass-bg);
+      border: var(--glass-border);
+      box-shadow: var(--glass-shadow);
+      z-index: 0;
+      transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .toggle-option {
@@ -91,8 +83,8 @@ const select = (value: string) => {
 }
 
 .toggle-option.active {
-  color: #fff;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    color: var(--toggle-text-active);
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
 /* Remove default button focus and add a custom one */
