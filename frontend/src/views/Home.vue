@@ -3,10 +3,17 @@
     import BaseDiv from '@/components/BaseDiv.vue';
     import { useI18n } from '@/locales/i18n';
     import type { SensorInfo } from '@/Utilities/types/SensorInfo';
+    import PageInput from '@/components/PageInput.vue';
+    import { ref } from 'vue';
+    import PageButton from '@/components/PageButton.vue';
+    import rightArrow from '@/../public/icons/RightArrow.svg';
     
     //Library for easy translation features
     const { t } = useI18n();
 
+    let newSensorName = ref<string>("");
+    let newSensorPassword = ref<string>("");
+    
     // Owned sensors
     // TODO: Create an API endpoint and connect to db
     let sensors: SensorInfo[] = [
@@ -23,7 +30,7 @@
             <h1 class="marginless headerText"> {{t("home.welcomeBack")}} </h1>
         </BaseDiv>
 
-        <BaseDiv>
+        <BaseDiv class="headerDiv">
             <h1 class="marginless headerText sensorsText"> {{t("home.checkSensors")}} </h1>
 
             <BaseDiv v-for="sensor in sensors" class="sensorDiv">
@@ -44,6 +51,15 @@
                 <div class="sensorDivArrow">
                 </div>
             </BaseDiv>
+        </BaseDiv>
+
+        <BaseDiv class="headerDiv addSensorDiv">
+            <h1 class="marginless headerText sensorsText"> {{t("home.addPlant")}} </h1>
+
+            <PageInput class="inputDiv" type="text" v-model:modelValue="newSensorName" :placeholder="t('home.sensorName')"/>
+            <PageInput class="inputDiv" type="password" v-model:modelValue="newSensorPassword" :placeholder="t('home.sensorPassword')" />
+
+            <PageButton class="inputDiv" variant="primary" :loading="false" rightIcon="/icons/RightArrow.svg"> Añadir </PageButton>
         </BaseDiv>
     </BasePage>
 </template>
@@ -110,5 +126,17 @@
     
     .sensorNameText {
         font-size: 25px;
+    }
+
+    .addSensorDiv {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+    }
+    
+    .inputDiv {
+        margin-bottom: 10px;
+        max-width: 700px;
     }
 </style>
