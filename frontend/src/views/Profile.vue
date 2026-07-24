@@ -7,6 +7,7 @@ import ToggleBar from '@/components/ToggleBar.vue';
 import { onMounted, ref } from 'vue';
 import { useThemeStore } from '@/stores/theme'
 import Dropdown from '@/components/Dropdown.vue';
+import PageButton from '@/components/PageButton.vue';
 
 const themeStore = useThemeStore();
 
@@ -74,8 +75,10 @@ onMounted(() => {
 
 <template>
     <BasePage location="profile">
-        <BaseDiv class="headerDiv">
+        <BaseDiv class="headerDiv header">
             <h1 class="marginless headerText"> {{info.username}} </h1>
+
+            <PageButton :iconOnly="true" icon="/icons/Edit.svg" />
         </BaseDiv>
 
         <BaseDiv class="headerDiv">
@@ -117,6 +120,15 @@ onMounted(() => {
 
 .headerDiv {
     margin-bottom: 30px;
+}
+
+.header {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    gap: 30px;
 }
 
 .innerDiv {
