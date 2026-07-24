@@ -10,3 +10,6 @@ auth.noEmptyFields,You shall fill all the fields,Recuerde rellenar todos los cam
 home.welcomeBack,Welcome back!,¡Bienvenido de nuevo!
 home.checkSensors,Check your plants,Vigila tus plantas
 home.checkAll,Check all,Comprobar todas las plantas
+home.addPlant,Add a new plant,Añadir una planta nueva
+home.sensorName,Sensor name,Nombre del sensor
+home.sensorPassword,Sensor password,Contraseña del sensor
