@@ -42,7 +42,7 @@ const changedTheme = () => {
             <h1 class="marginless headerText"> {{t("profile.configuration")}} </h1>
 
             <BaseDiv class="innerDiv">
-                <p class="marginless sensorNameText"> {{t("home.checkAll")}} </p>
+                <p class="marginless sensorNameText"> {{t("conf.theme")}} </p>
 
                 <ToggleBar
                   v-model="currentTheme"
