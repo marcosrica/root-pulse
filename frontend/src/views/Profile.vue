@@ -30,9 +30,20 @@ let info: userInfo = {
 const changedTheme = () => {
     if (currentTheme.value == t("theme.dark")) {
         themeStore.setTheme('dark');
+        info.theme = false;
     }
     else {
         themeStore.setTheme('light');
+        info.theme = true;
+    }
+}
+
+const setThemeBasedOnBoolean = () => {
+    if (info.theme) {
+        currentTheme.value = t('theme.light');
+    }
+    else {
+        currentTheme.value = t('theme.dark');
     }
 }
 
@@ -46,7 +57,9 @@ const changedLanguage = () => {
             setLocale("es");
             break;
     }
-  }
+
+    setThemeBasedOnBoolean();
+}
 
 const getVerboseLanguage = (lang: string) => {
     switch (lang) {
@@ -59,16 +72,10 @@ const getVerboseLanguage = (lang: string) => {
 }
 
 onMounted(() => {
-    if (info.theme) {
-        currentTheme.value = t('theme.light');
-    }
-    else {
-        currentTheme.value = t('theme.dark');
-    }
+    setThemeBasedOnBoolean();
 
     currentLang.value = getVerboseLanguage(info.language) || "en";
 
-    changedTheme();
     changedLanguage();
 });
 </script>
@@ -98,10 +105,10 @@ onMounted(() => {
                 <p class="marginless sensorNameText"> {{t("conf.language")}} </p>
 
                 <Dropdown
-                v-model="currentLang"
-                :options="['English', 'Español']"
-                placeholder="Selecciona un idioma"
-                @update:modelValue="changedLanguage"
+                    v-model="currentLang"
+                    :options="['English', 'Español']"
+                    placeholder="Selecciona un idioma"
+                    @update:modelValue="changedLanguage"
                 />
             </BaseDiv>
         </BaseDiv>
