@@ -1,6 +1,5 @@
 import { Router } from 'express';
-import userLogin from './user/Login';
-import createNewAccount from './user/CreateAccount';
+import { userLogin, createNewAccount } from './user';
 
 const UserRoutes = Router();
 
