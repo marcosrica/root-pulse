@@ -10,6 +10,7 @@ import { useThemeStore } from '@/stores/theme'
 import Dropdown from '@/components/Dropdown.vue';
 import PageButton from '@/components/PageButton.vue';
 import FloatingPanel from '@/components/FloatingPanel.vue';
+import PageInput from '@/components/PageInput.vue';
 
 const themeStore = useThemeStore();
 
@@ -22,13 +23,14 @@ const currentLang = ref('English')
 const showSensorInfoPanel = ref(false);
 const sensorId = ref<number>(0);
 
+const currentSensorAlias = ref<string>("");
+
 let info: userInfo = {
   username: "TestUser",
   language: "en",
   theme: false,
   id: 1,
 }
-
 
 let sensors: SensorInfo[] = [
     {name:"Sensor 1", alias: "", lastMeasure: 61, minAlert: 30, lastConnection: new Date('December 17, 2021 04:28:00')},
@@ -82,10 +84,20 @@ const getVerboseLanguage = (lang: string) => {
 }
 
 const inspectSensor = (sensorIndex: number) => {
-  sensorId.value = sensorIndex;
-  showSensorInfoPanel.value = true;
+    sensorId.value = sensorIndex;
+    showSensorInfoPanel.value = true;
+    currentSensorAlias.value = sensors[sensorIndex]?.alias || "";
+  
+    console.log(sensorIndex);
+}
 
-  console.log(sensorIndex);
+const aliasChanged = () => {
+    if (currentSensorAlias.value == "") {
+        currentSensorAlias.value = sensors[sensorId.value]?.alias || "";
+    }
+    else {
+        //TODO: send alias to cloud
+    }
 }
 
 onMounted(() => {
@@ -117,10 +129,7 @@ onMounted(() => {
 
                         <div class="inspectSensorRow"> 
                             <h1 class="marginless sensorNameText"> {{t("profile.alias")}}: </h1>
-                            <div class="row">
-                                <h1 class="marginless sensorNameText"> {{sensors[sensorId]?.alias}} </h1>
-                                <PageButton :iconOnly="true" icon="/icons/Edit.svg" />
-                            </div>
+                            <PageInput :placeholder="sensors[sensorId]?.alias" v-model="currentSensorAlias" :changed="aliasChanged"></PageInput>
                         </div>
                     </BaseDiv>
                 </div>
