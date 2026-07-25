@@ -1,4 +1,4 @@
-import mysql, { RowDataPacket } from 'mysql2';
+import mysql, { RowDataPacket, ResultSetHeader } from 'mysql2';
 
 import dotenv from 'dotenv';
 dotenv.config();
@@ -24,6 +24,17 @@ interface userRow extends RowDataPacket {
   username: string;
   password: string;
 };
+
+// { atributos que tiene ResutlSetheader
+//   fieldCount: 0,
+//   affectedRows: 1,      
+//   insertId: 25,         
+//   info: 'Rows matched: 1  Changed: 1  Warnings: 0',
+//   serverStatus: 2,
+//   warningStatus: 0,
+//   changedRows: 0
+// }
+
 //class with simple CRUD like functions and querys
 export class UsersDatabase {
   
@@ -42,6 +53,28 @@ export class UsersDatabase {
     );
     return row.length ? row[0] : null;
   }
+
+  //insertaremos un nuevo usuario y retornamos su id generado, para esto importamos un nuevo tipo de mysql2
+  async createUser ( username: string, password: string ): Promise<number> {
+    const [result] = await pool.query<ResultSetHeader>(
+      `INSERT INTO users (username, password) VALUES (?,?)`, [username, password]
+    );
+    //por este atributo necesitamos el nuevo tipo ResultSetHeader, este es el id que se genera, si intentamos acceder al id normal
+    //este todavia no esta generado
+    return result.insertId;
+  }
+
+  //vamos a borrar un usuario por id y devolvemos el resultado de la operacion
+  async deleteUser ( id: number): Promise<boolean> {
+    const [result] = await pool.query<ResultSetHeader>(
+      `DELETE FROM users WHERE id = ?`, [id]
+    );
+    //por este atributo necesitamos el nuevo tipo ResultSetHeader, este es el id que se genera, si intentamos acceder al id normal
+    //este todavia no esta generado
+    return result.affectedRows > 0;
+  }
+
+
   // CreateUser = async (name:string, hashedPassword:string): Promise<userDbresultStatus> => {
   //   console.log("trying to add user with " + name + " and password: " + hashedPassword);
 
