@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { UsersDatabase } from '../../database/Database';
-import { userDbresultStatus } from '../../errors/UserDBstatus';
+import { UsersDatabase } from '../database/Database';
+import { userDbresultStatus } from '../errors/UserDBstatus';
 
 const createNewAccount = async (req: Request, res: Response, next: NextFunction) => {
   let db: UsersDatabase = new UsersDatabase();
@@ -16,6 +16,7 @@ const createNewAccount = async (req: Request, res: Response, next: NextFunction)
   }
   //
   try {
+    
     
   } catch (error) {
     

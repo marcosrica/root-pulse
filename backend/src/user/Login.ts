@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { UsersDatabase } from '../../database/Database';
+import { UsersDatabase } from '../database/Database';
 
 
 const userLogin = async (req: Request, res: Response, next: NextFunction) => {
