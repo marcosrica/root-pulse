@@ -5,7 +5,7 @@ export async function up(knex: Knex): Promise<void> {
   return knex.schema.createTable("measures", (table) => {
     table.increments("id");
 
-    table.integer("sensor_id").notNullable().index();
+    table.integer("sensor_id").unsigned().notNullable().index();
     table.integer("value").notNullable();
     table.timestamp("measured_at").notNullable().defaultTo(knex.fn.now());
 
