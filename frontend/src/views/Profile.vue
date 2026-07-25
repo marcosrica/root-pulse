@@ -11,6 +11,7 @@ import Dropdown from '@/components/Dropdown.vue';
 import PageButton from '@/components/PageButton.vue';
 import FloatingPanel from '@/components/FloatingPanel.vue';
 import PageInput from '@/components/PageInput.vue';
+import type { connectedUsersInfo } from '@/Utilities/types/ConnectedUsersInfo';
 
 const themeStore = useThemeStore();
 
@@ -24,6 +25,8 @@ const showSensorInfoPanel = ref(false);
 const sensorId = ref<number>(0);
 
 const currentSensorAlias = ref<string>("");
+const currentStatusWithSensor = ref<connectedUsersInfo>();
+const searchedUsername = ref<string>("");
 
 let info: userInfo = {
   username: "TestUser",
@@ -37,6 +40,28 @@ let sensors: SensorInfo[] = [
     {name:"Sensor 2", alias: "Alias 2", lastMeasure: 20, minAlert: 30, lastConnection: new Date(2021, 11, 17)},
     {name:"Sensor 3", alias: "Alias 3", lastMeasure: 90, minAlert: 30, lastConnection: new Date(2026, 12, 31)},
     {name:"Sensor 4", alias: "", lastMeasure: 80, minAlert: 30, lastConnection: new Date(2021, 11, 17, 4, 28, 0)},
+]
+
+let connections: connectedUsersInfo[] = [
+  { userId: 2, username: "Manolo", userPermission: false },
+  { userId: 3, username: "Carmen", userPermission: true },
+  { userId: 4, username: "Lucía", userPermission: false },
+  { userId: 2, username: "Manolo", userPermission: false },
+  { userId: 3, username: "Carmen", userPermission: true },
+  { userId: 4, username: "Lucía", userPermission: false },
+  { userId: 2, username: "Manolo", userPermission: false },
+  { userId: 3, username: "Carmen", userPermission: true },
+  { userId: 4, username: "Lucía", userPermission: false },
+  { userId: 2, username: "Manolo", userPermission: false },
+  { userId: 3, username: "Carmen", userPermission: true },
+  { userId: 4, username: "Lucía", userPermission: false },
+];
+
+let possibleUsersToAdd: userInfo[] = [
+  { username: "Juan", language: "en", theme: false, id: 1 },
+  { username: "Claudia", language: "en", theme: false, id: 1 },
+  { username: "Manolo", language: "en", theme: false, id: 1 },
+  { username: "Laura", language: "en", theme: false, id: 1 },
 ]
 
 const changedTheme = () => {
@@ -87,6 +112,13 @@ const inspectSensor = (sensorIndex: number) => {
     sensorId.value = sensorIndex;
     showSensorInfoPanel.value = true;
     currentSensorAlias.value = sensors[sensorIndex]?.alias || "";
+
+    if (sensorIndex == 0) {
+        currentStatusWithSensor.value = { userId: 1, username: "TestUser", userPermission: false };
+    }
+    else {
+      currentStatusWithSensor.value = { userId: 1, username: "TestUser", userPermission: true };
+    }
   
     console.log(sensorIndex);
 }
@@ -121,8 +153,9 @@ onMounted(() => {
                 </div>
 
                 <div class="inspectSensorContentWrapper">
-                    <BaseDiv class="inspectSensorBasicInfoWrapper">
-                        <div class="inspectSensorRow"> 
+                    <!-- Basic data and config -->
+                    <BaseDiv class="inspectSensorBasicInfoWrapper notEndInspectSensorContainer">
+                        <div class="inspectSensorRow notLastRow"> 
                             <h1 class="marginless sensorNameText"> {{t("profile.name")}}: </h1>
                             <h1 class="marginless sensorNameText"> {{sensors[sensorId]?.name}} </h1>
                         </div>
@@ -132,16 +165,53 @@ onMounted(() => {
                             <PageInput :placeholder="sensors[sensorId]?.alias" v-model="currentSensorAlias" :changed="aliasChanged"></PageInput>
                         </div>
                     </BaseDiv>
+
+                    <!-- User management -->
+                    <BaseDiv class="inspectSensorBasicInfoWrapper notEndInspectSensorContainer">
+                        <BaseDiv v-for="(user, index) in connections" class="innerDiv">
+                            <div class="sensorDivUsableSpace">
+                                <p class="marginless sensorNameText"> {{user.username}} </p>
+                            </div>
+
+                            <!-- For admin users -->
+                            <div class="marginless sensorDivUsableSpace" v-if="currentStatusWithSensor?.userPermission">
+                                <PageButton variant="danger" :iconOnly="true" v-if="!user.userPermission" icon="/icons/Trash.svg" />
+                                
+                                <PageButton :iconOnly="true" icon="/icons/Crown.svg" v-if="user.userPermission" variant="gold"></PageButton>
+                                <PageButton :iconOnly="true" icon="/icons/UpArrow.svg" v-else></PageButton>
+                            </div>
+                            <!-- For non-admin -->
+                            <div class="marginless sensorDivUsableSpace" v-else>
+                                <PageButton :iconOnly="true" icon="/icons/Crown.svg" v-if="user.userPermission" variant="gold"></PageButton>
+                            </div>
+                        </BaseDiv>
+                    </BaseDiv>
+
+                    <!-- Add new users, only accesible for admins -->
+                    <BaseDiv class="inspectSensorBasicInfoWrapper" v-if="currentStatusWithSensor?.userPermission">
+                        <h1 class="marginless sensorNameText centered notLastRow"> {{t("profile.addUser")}} </h1>
+                        <PageInput class="notLastRow" :placeholder="t('profile.addUsername')" v-model="searchedUsername"></PageInput>
+
+                        <BaseDiv v-for="user in possibleUsersToAdd" class="sensorDiv">
+                            <div class="sensorDivUsableSpace">
+                                <p class="marginless sensorNameText"> {{user.username}} </p>
+                            </div>
+                            <div class="sensorDivArrow">
+                            </div>
+                        </BaseDiv>
+                    </BaseDiv>
                 </div>
             </div>
         </FloatingPanel>
-        
+
+        <!-- Username -->
         <BaseDiv class="headerDiv header">
             <h1 class="marginless headerText"> {{info.username}} </h1>
 
             <PageButton :iconOnly="true" icon="/icons/Edit.svg" />
         </BaseDiv>
 
+        <!-- Basic configurations -->
         <BaseDiv class="headerDiv">
             <h1 class="marginless headerText"> {{t("profile.configuration")}} </h1>
 
@@ -167,6 +237,7 @@ onMounted(() => {
             </BaseDiv>
         </BaseDiv>
 
+        <!-- Sensors' div -->
         <BaseDiv class="headerDiv">
             <h1 class="marginless headerText"> {{t("profile.sensors")}} </h1>
             
@@ -194,6 +265,10 @@ onMounted(() => {
     gap: 10px;
 }
 
+.centered {
+    text-align: center;
+}
+
 .marginless {
     margin: 0px;
 }
@@ -218,12 +293,12 @@ onMounted(() => {
 
 .innerDiv {
     margin-bottom: 10px;
-    cursor: pointer;
 
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    gap: 20px;
 }
 
 .sensorNameText {
@@ -287,11 +362,21 @@ onMounted(() => {
     max-height: 80dvh;
 
     overflow-y: auto;
+    scrollbar-width: none;
+    ::-webkit-scrollbar {display: none;}
+}
+
+.notEndInspectSensorContainer {
+    margin-bottom: 20px;
 }
 
 .inspectSensorBasicInfoWrapper {
     box-sizing: border-box;
     width: 100%;
+}
+
+.notLastRow {
+    margin-bottom: 10px;
 }
 
 .inspectSensorRow {
@@ -301,5 +386,23 @@ onMounted(() => {
     align-items: center;
     width: 100%;
     gap: 20px;
+}
+
+.sensorDiv {
+    margin-bottom: 10px;
+    cursor: pointer;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sensorDivArrow {
+    height: 20px;
+    aspect-ratio: 1;
+    background-color: var(--div-border);
+    mask-image: url('/icons/RightArrow.svg');
+    mask-size: contain;
 }
 </style>
