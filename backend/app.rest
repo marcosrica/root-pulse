@@ -1,0 +1,21 @@
+### Variables, deberia de ser HOST pero lo reuso porque es el mismo srry
+
+@port={{ $dotenv PORT}}
+@host={{ $dotenv DB_HOST}}
+
+
+### POST de la funcion crear un usuario
+POST http://{{host}}:{{port}}/api/user/newAccount
+Content-Type: application/json
+
+{
+
+}
+
+### POST de la funcion logear un usuario
+POST http://{{host}}:{{port}}/api/user/login
+Content-Type: application/json
+
+{
+    
+}
