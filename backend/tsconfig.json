@@ -14,6 +14,6 @@
     "declarationMap": true,
     "sourceMap": true
   },
-  "include": ["src/**/*", "src/migrations/**/*", "src/seeds/**/*", "src/user"],
+  "include": ["src/**/*", "src/migrations/**/*", "src/seeds/**/*", "src/ controllers"],
   "exclude": ["node_modules", "dist"]
 }

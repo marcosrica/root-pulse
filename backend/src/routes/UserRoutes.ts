@@ -1,6 +1,6 @@
 import { Router } from 'express';
 //usando el archivo index.ts podemos importar la logica de los endpoints en una linea, para no hacer muchas lineas en un futuro
-import { userLogin, createNewAccount } from '../user';
+import { userLogin, createNewAccount } from '../controllers/userControlers/index';
 
 const UserRoutes = Router();
 
