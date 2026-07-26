@@ -55,13 +55,13 @@ export class UsersDatabase {
   }
 
   //insertaremos un nuevo usuario y retornamos su id generado, para esto importamos un nuevo tipo de mysql2
-  async createUser ( username: string, password: string ): Promise<number> {
+  async createUser ( username: string, password: string ): Promise<number | null> {
     const [result] = await pool.query<ResultSetHeader>(
       `INSERT INTO users (username, password) VALUES (?,?)`, [username, password]
     );
     //por este atributo necesitamos el nuevo tipo ResultSetHeader, este es el id que se genera, si intentamos acceder al id normal
     //este todavia no esta generado
-    return result.insertId;
+    return result.affectedRows < 1 ? null : result.insertId;
   }
 
   //vamos a borrar un usuario por id y devolvemos el resultado de la operacion

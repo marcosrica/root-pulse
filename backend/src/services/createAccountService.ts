@@ -9,7 +9,7 @@ type UserRegistered = {
 }
 const db: UsersDatabase = new UsersDatabase();
 
-const register = async( username: string, password: string): Promise<UserRegistered> => {
+const register = async( username: string, password: string): Promise<UserRegistered | null> => {
     //Comprobacion de campos con informacion
     if(!username.trim()) throw new Error('Username field must not be empty');
     if(!password.trim()) throw new Error('Password field must not be empty');
@@ -24,12 +24,13 @@ const register = async( username: string, password: string): Promise<UserRegiste
 
     //Ahora guardamos al nuevo usuario en la base de datos y nos quedamos con el Id con el que se crea
     const userId = await db.createUser( username, hashedPassword);
-
+    if(!userId) throw new Error('Internal db error')
+    //si el usuario se ha creado devolvemos los datos y si no null
     return {
-        id: userId,
-        username: username,
-        createdTime: new Date(),
-    };
-}
+            id: userId,
+            username: username,
+            createdTime: new Date(),
+            };
+    }
 
 export default register;
