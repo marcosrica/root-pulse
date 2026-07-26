@@ -27,7 +27,7 @@ export class login {
         //checking if the password is the same as in the database, this method compares a plain text password with the 
         //hashed password in our database and returns a boolean
         const isValid = await bcrypt.compare(data.password, existingU.password);
-        if(!isValid) throw new Error('Invalid password ');
+        if(!isValid) throw new Error('Invalid password');
 
         //if everything is alright we can generate the token
         const token = await generateToken({ id: existingU.id,
