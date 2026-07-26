@@ -14,6 +14,8 @@ const register = async( username: string, password: string): Promise<UserRegiste
     if(!username.trim()) throw new Error('Username field must not be empty');
     if(!password.trim()) throw new Error('Password field must not be empty');
     if(password.length < 6) throw new Error('Password must be at least of 6 caracters');
+    if(password.toLowerCase() == password) throw new Error('Passowrd must have at least one capital letter');
+    if(password.includes(" ") || password.trim() != password) throw new Error('Password must not contain spaces');
 
     //comprobacion de usuario existente en minusculas para evitar situaciones de User1 = Maria; User2 = MaRiA
     const existingU = await db.findByUsername(username.toLowerCase());
