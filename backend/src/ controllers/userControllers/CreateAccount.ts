@@ -3,14 +3,14 @@ import { UsersDatabase } from '../../database/Database';
 //No hace falta poner la ruta completa porque el archivo index hace que se pueda exportar como si fueran propiedades suyas
 import { register } from '../../services'
 
-
+const registerService = new register(new UsersDatabase());
 const createNewAccount = async (req: Request, res: Response) => {
 
   //Esto es preferencia personal, y si fueran mas atributos de body podriamos crear un type para los tipos pero solo son dos
   const { username, password }: { username: string, password: string } = req.body;
   try {
     //hacemos una llamada al servicio dentro del try-catch para trabajar con los errores que lanzamos
-    const tryCreateAccount = await register(username, password);
+    const tryCreateAccount = await registerService.execute(username, password);
 
     //Si se produce algun error se captura y se trata en el catch pero si no se llega a la siguiente respuesta de exito
     //200 = OK; 201 = Created mas especifico,

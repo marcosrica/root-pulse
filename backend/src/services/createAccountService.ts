@@ -8,9 +8,12 @@ type UserRegistered = {
     token: string;
     createdTime: Date;
 }
-const db: UsersDatabase = new UsersDatabase();
 
-const register = async( username: string, password: string): Promise<UserRegistered | null> => {
+export class register {
+    //inyectamos la base de datos en vez de usar una constante
+    constructor(private db: UsersDatabase) {}
+
+ async execute( username: string, password: string): Promise<UserRegistered | null> {
     //Comprobacion de campos con informacion
     if(!username.trim()) throw new Error('Username field must not be empty');
     if(!password.trim()) throw new Error('Password field must not be empty');
@@ -19,14 +22,14 @@ const register = async( username: string, password: string): Promise<UserRegiste
     if(password.includes(" ") || password.trim() != password) throw new Error('Password must not contain spaces');
 
     //comprobacion de usuario existente en minusculas para evitar situaciones de User1 = Maria; User2 = MaRiA
-    const existingU = await db.findByUsername(username.toLowerCase());
+    const existingU = await this.db.findByUsername(username.toLowerCase());
     if(existingU) throw new Error('This username is already on use');
 
     //Una vez que comprobamos que se puede insertar el usuario hasheamos la contraseña
-    const hashedPassword = await bcrypt.hash(password, 8);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     //Ahora guardamos al nuevo usuario en la base de datos y nos quedamos con el Id con el que se crea
-    const userId = await db.createUser( username, hashedPassword);
+    const userId = await this.db.createUser( username, hashedPassword);
     if(!userId) throw new Error('Internal db error');
 
     //Si el usuario se ha creado correctamente le generamos un token con el regitro para que entre directamente
@@ -41,5 +44,6 @@ const register = async( username: string, password: string): Promise<UserRegiste
             createdTime: new Date(),
             };
     }
+}
 
 export default register;
