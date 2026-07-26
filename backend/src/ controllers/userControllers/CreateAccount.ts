@@ -14,7 +14,13 @@ const createNewAccount = async (req: Request, res: Response) => {
 
     //Si se produce algun error se captura y se trata en el catch pero si no se llega a la siguiente respuesta de exito
     //200 = OK; 201 = Created mas especifico,
-     return res.status(201).json({ result: "User created succesfully"});
+     return res.status(201).json({ 
+                                    result: "User created succesfully",
+                                    user: username,
+                                    token: tryCreateAccount?.token,
+                                    regiserDate: tryCreateAccount?.createdTime,
+                                    
+                                  });
     
     
 
@@ -35,22 +41,27 @@ const createNewAccount = async (req: Request, res: Response) => {
 
       //Error lanzado si se detecta que no hay mayusculas
       if(error.message === 'Passowrd must have at least one capital letter'){
-        return res.status(400).json({ cause: "Password must have at least one capital letter"})
+        return res.status(400).json({ cause: "Password must have at least one capital letter"});
       }
 
       //error lanzado si hay algun espacio en la contraseña
       if(error.message === 'Password must not contain spaces'){
-        return res.status(400).json({ cause: "Password must not contain spaces"})
+        return res.status(400).json({ cause: "Password must not contain spaces"});
       }
 
       //Error lanzado si el usuario ya existe
       if( error.message === 'This username is already on use'){
-        return res.status(400).json({ cause: "Username already in use"})
+        return res.status(400).json({ cause: "Username already in use"});
       }
 
       //Error si al intentar crear usuario se da un error a nivel de base de datos
       if(error.message === 'Internal db error'){
-        return res.status(500).json({ cause: "Internal server error", error: error.message})
+        return res.status(500).json({ cause: "Internal database error", error: error.message});
+      }
+
+      //Error al crear el token del usuario
+      if(error.message === 'Error al crear el token'){
+        return res.status(500).json({ cause: "Error while creating the token"});
       }
 
     }

@@ -1,10 +1,11 @@
 import { UsersDatabase } from '../database/Database';
 import bcrypt from 'bcrypt';
-
+import { generateToken } from '../utils/token';
 //Tipo de respuesta que devuelve un usuario credo, con fecha y todo
 type UserRegistered = {
     id: number;
     username: string;
+    token: string;
     createdTime: Date;
 }
 const db: UsersDatabase = new UsersDatabase();
@@ -26,11 +27,17 @@ const register = async( username: string, password: string): Promise<UserRegiste
 
     //Ahora guardamos al nuevo usuario en la base de datos y nos quedamos con el Id con el que se crea
     const userId = await db.createUser( username, hashedPassword);
-    if(!userId) throw new Error('Internal db error')
-    //si el usuario se ha creado devolvemos los datos y si no null
+    if(!userId) throw new Error('Internal db error');
+
+    //Si el usuario se ha creado correctamente le generamos un token con el regitro para que entre directamente
+    const token = generateToken({id: userId, username: username});
+    if(!token) throw new Error('Error al crear el token')
+
+    //si el usuario se ha creado devolvemos los datos mas el token
     return {
             id: userId,
             username: username,
+            token: token,
             createdTime: new Date(),
             };
     }
