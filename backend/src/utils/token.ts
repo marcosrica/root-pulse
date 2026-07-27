@@ -20,8 +20,8 @@ export const verifyToken = (token: string): tokenInfo => {
         //verificamos el token y forzamos el tipo de la respuesta a nuestro tokenInfo
         return jwt.verify(token, SECRET_SEED) as tokenInfo;
     }catch(error) {
-        //lanzamos el error para recogerlo mas tarde
-        throw new Error('Invalid or expired token');
+        //throw the error produced to treat it in the middleware
+        throw error;
     }
 };
 

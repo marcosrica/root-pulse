@@ -73,48 +73,5 @@ export class UsersDatabase {
     //este todavia no esta generado
     return result.affectedRows > 0;
   }
-
-
-  // CreateUser = async (name:string, hashedPassword:string): Promise<userDbresultStatus> => {
-  //   console.log("trying to add user with " + name + " and password: " + hashedPassword);
-
-  //   //First, check if the username already exists
-  //   const [check] = await pool.query<RowDataPacket[]>(`
-  //     SELECT id FROM users
-  //     WHERE username = ?
-  //   `, [name]);
-
-  //   if (check.length != 0) {
-  //     return userDbresultStatus.UsernameAlreadyExists;
-  //   }
-  //   else {
-  //     const [response] = await pool.query(`
-  //       INSERT INTO users(username, password)
-  //       VALUES(?, ?)
-  //       `, [name, hashedPassword]);
-
-  //     return userDbresultStatus.AllOK;
-  //   }
-  // }
-
-  // CheckForUser = async (name: string, hashedPassword:string): Promise<number> => {
-  //   const [response] = await pool.query<RowDataPacket[]>(`
-  //     SELECT id, password FROM users
-  //     WHERE username = ?
-  //     `, [name]);
-
-  //   console.log(response)
-
-  //   if (response.length != 1) {
-  //     return -1;
-  //   }
-  //   else {
-  //     if (response[0].password == hashedPassword) {
-  //       return response[0].id;
-  //     }
-  //     else {
-  //       return -1;
-  //     }
-  //   }
-  // }
+  
 }

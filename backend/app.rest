@@ -8,7 +8,7 @@ POST http://localhost:{{port}}/api/user/newAccount
 Content-Type: application/json
 
 {
-    "username": "Carlosdb",
+    "username": "Carlosdbs",
     "password": "Mariadbesito"
 
 }
