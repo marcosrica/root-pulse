@@ -21,7 +21,7 @@ export class login {
         if(!data.password) throw new Error('password field must be filled');
 
         //comprobamos que exista el usuario con el username
-        const existingU = await this.db.findByUsername(data.username.toLocaleLowerCase());
+        const existingU = await this.db.findByUsername(data.username.toLowerCase());
         if(!existingU) throw new Error('There is no username with this username');
 
         //checking if the password is the same as in the database, this method compares a plain text password with the 
@@ -30,7 +30,7 @@ export class login {
         if(!isValid) throw new Error('Invalid password');
 
         //if everything is alright we can generate the token
-        const token = await generateToken({ id: existingU.id,
+        const token = generateToken({ id: existingU.id,
                                             username: existingU.username
                                         });
     

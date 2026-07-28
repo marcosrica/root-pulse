@@ -2,7 +2,7 @@ import { UsersDatabase } from '../database/Database';
 import bcrypt from 'bcrypt';
 import { generateToken } from '../utils/token';
 //Tipo de respuesta que devuelve un usuario credo, con fecha y todo
-type UserRegistered = {
+export type UserRegistered = {
     id: number;
     username: string;
     token: string;
@@ -13,7 +13,7 @@ export class register {
     //inyectamos la base de datos en vez de usar una constante
     constructor(private db: UsersDatabase) {}
 
- async execute( username: string, password: string): Promise<UserRegistered | null> {
+ async execute( username: string, password: string): Promise<UserRegistered> {
     //Comprobacion de campos con informacion
     if(!username.trim()) throw new Error('Username field must not be empty');
     if(!password.trim()) throw new Error('Password field must not be empty');
@@ -28,8 +28,8 @@ export class register {
     //Una vez que comprobamos que se puede insertar el usuario hasheamos la contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    //Ahora guardamos al nuevo usuario en la base de datos y nos quedamos con el Id con el que se crea
-    const userId = await this.db.createUser( username, hashedPassword);
+    //Ahora guardamos al nuevo usuario username en minusculas, en la base de datos y nos quedamos con el Id con el que se crea
+    const userId = await this.db.createUser( username.toLowerCase(), hashedPassword);
     if(!userId) throw new Error('Internal db error');
 
     //Si el usuario se ha creado correctamente le generamos un token con el regitro para que entre directamente

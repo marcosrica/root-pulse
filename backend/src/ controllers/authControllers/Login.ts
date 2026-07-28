@@ -11,10 +11,16 @@ const userLogin = async (req: Request, res: Response) => {
     //we try to execute the service of loging an user and if anything went bad we can catch it
     const tryLogin = await loginService.execute({username: username, password: password});
 
+res.cookie('token', tryLogin.token, {
+              httpOnly: true,  //restricts the access to the token via JavaScript
+             //secure: true --> token only send through https, as we are working in http localhost it doesnt send 
+              // sameSite: 'strict', //cookie wont be went if the petition is from an external web
+              maxAge: 3 * 60 * 60 * 1000 //cookie duration (3 hours)
+});
+
     return res.status(200).json({ response: "user logged in correctly",
                                   id: tryLogin.id,
                                   username: tryLogin.username,
-                                  token: tryLogin.token
     });
 
   } catch (error) {
@@ -38,6 +44,8 @@ const userLogin = async (req: Request, res: Response) => {
       }
       
     }
+    console.error("internal error while login: ", error);
+    return res.status(500).json({ cause: "Unknown error ocurred in server"});
   }
 };
 
