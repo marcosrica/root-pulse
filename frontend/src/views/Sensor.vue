@@ -100,6 +100,7 @@
         </BaseDiv>
 
         <BaseDiv class="headerDiv paddingless">
+        	<h1 class="marginless headerText" style="margin-top: 10px;"> {{t("sensor.graph")}} </h1>
         	<Chart
        			:xData="dates"
         		:yData="measures"

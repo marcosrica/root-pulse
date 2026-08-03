@@ -49,6 +49,7 @@
 		grid: {
 			left: 40,
 			right: 20,
+			top: 10,
 			containLabel: false,
 		},
 		tooltip: {
