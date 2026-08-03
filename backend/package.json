@@ -23,6 +23,7 @@
     "jsonwebtoken": "^9.0.3",
     "knex": "^3.3.0",
     "mysql2": "^3.22.6",
+    "pino": "^10.3.1",
     "tsx": "^4.23.1"
   },
   "devDependencies": {
