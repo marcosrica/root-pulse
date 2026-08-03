@@ -10,21 +10,36 @@
     const { t } = useI18n();
 
     const valueOk = ref<boolean>(true);
-    const newMin = ref<string>("0");
+    const lastConnection_formatted = ref<string>("");
     
     let data: SensorInfo = {
         name: "Sensor1",
         alias: "",
         lastMeasure: 55,
         minAlert: 30,
-        lastConnection: new Date('December 17, 2020 04:28:00')
+        lastConnection: new Date('August 3, 2026 04:28:00')
     };
 
+    const formatTime = (): string => {
+        const diffMs = Date.now() - data.lastConnection.getTime()
+        const seconds = Math.floor(Math.abs(diffMs) / 1000)
+        const minutes = Math.floor(seconds / 60)
+        const hours   = Math.floor(minutes / 60)
+        const days    = Math.floor(hours / 24)
+    
+        if (seconds < 60) return t('connection.justNow')
+        if (minutes < 60) return t('connection.minutesAgo', { n: minutes })
+        if (hours < 24)   return t('connection.hoursAgo',   { n: hours })
+        if (days < 30)    return t('connection.daysAgo',    { n: days })
+        if (days < 365)   return t('connection.monthsAgo',  { n: Math.floor(days / 30) })
+        return t('connection.yearsAgo', { n: Math.floor(days / 365) })
+    }
+    
     onMounted(() => {
         valueOk.value = data.lastMeasure > data.minAlert;
-        newMin.value = data.minAlert;
-        
-        let vl = Date.now() - data.lastConnection.getDate();
+        lastConnection_formatted.value = formatTime();
+
+        console.log(lastConnection_formatted.value)
     })
 </script>
 
@@ -35,19 +50,26 @@
         </BaseDiv>
 
         <BaseDiv class="partDiv">
-            <div class="leftDiv">
-                <h1 :class="['marginless', 'lastMeasureCuantity', valueOk ? 'Ok' : 'notOk']"> {{data.lastMeasure}}% </h1>
-                <p class="marginless"> {{t("sensor.lastMeasure")}} </p>
+            <div class="rowContainer">
+                <div class="leftDiv">
+                    <h1 :class="['marginless', 'lastMeasureCuantity', valueOk ? 'Ok' : 'notOk']"> {{data.lastMeasure}}% </h1>
+                    <p class="marginless"> {{t("sensor.lastMeasure")}} </p>
+                </div>
+    
+                <div class="leftDiv lastConnectionLandscape">
+                    <h1 :class="['marginless', 'lastMeasureCuantity']"> {{lastConnection_formatted}} </h1>
+                    <p class="marginless"> {{t("connection.lastConnection")}} </p>
+                </div>
+    
+                <div class="leftDiv">
+                    <h1 :class="['marginless', 'lastMeasureCuantity', 'alert']"> {{data.minAlert}}% </h1>
+                    <p class="marginless"> {{t("sensor.alert")}} </p>
+                </div>
             </div>
-
-            <div class="leftDiv">
-                
-            </div>
-
-            <div class="leftDiv minAlertDiv">
-                    <div class="minAlertIcon"></div>
-                    <input type="number" class="minAlertInput" v-model="newMin" />
-                    <h1 class="marginless headerText"> % </h1>
+            
+            <div class="leftDiv lastConnectionPortrait">
+                <h1 :class="['marginless', 'lastMeasureCuantity', 'timeMeasure']"> {{lastConnection_formatted}} </h1>
+                <p class="marginless"> {{t("connection.lastConnection")}} </p>
             </div>
         </BaseDiv>
     </BasePage>
@@ -69,8 +91,15 @@
 
     .partDiv {
         display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .rowContainer {
+        display: flex;
         flex-direction: row;
         justify-content: space-between;
+        align-items: center;
     }
 
     .leftDiv {
@@ -81,12 +110,18 @@
         text-align: center;
         width: auto;
         gap: 0px;
+
+        min-width: 100px;
     }
 
     .lastMeasureCuantity {
         font-size: 60px;
     }
 
+    .timeMeasure {
+        font-size: 12dvw;
+    }
+    
     .notOk {
         color: var(--danger);
     }
@@ -95,30 +130,24 @@
         color: var(--ok)
     }
 
-    .minAlertDiv {
-        display: flex;
-        flex-direction: row;
-        width: auto;
-        min-width: 200px;
+    .alert {
+        color: var(--alert);
     }
 
-    .minAlertIcon {
-        min-height: 50px;
-        height: 100%;
-        aspect-ratio: 1;
-        background-color: var(--alert);
-        mask-image: url('/icons/Alert.svg');
-        mask-size: contain;
+    .lastConnectionLandscape {
+        display: none;
+
+        @media (orientation: landscape) {
+            display: block;
+        }
     }
 
-    .minAlertInput {
-        background-color: transparent;
-        width:80px;
-        height: 80%;
-        border: 1px solid white;
-        border-radius: 20px;
-        color: white;
-        font-size: 40px;
-        display: flex;
+    .lastConnectionPortrait {
+        display: none;
+
+        @media (orientation: portrait) {
+            margin-top: 20px;
+            display: block;
+        }
     }
 </style>
