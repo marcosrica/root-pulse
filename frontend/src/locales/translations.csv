@@ -20,6 +20,8 @@ profile.configuration,Configuration,Configuración
 profile.sensors,Sensors,Sensores
 profile.name,Name,Nombre
 profile.alias,Alias,Alias
+profile.addUser,Add user,Añadir usuario
+profile.addUsername,Username to add,Nombre del usuario a añadir
 
 conf.theme,Theme,Tema
 conf.language,Language,Idioma

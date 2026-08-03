@@ -3,7 +3,7 @@ import { Loader } from 'lucide-vue-next'
 
 // Props
 const props = withDefaults(defineProps<{
-  variant?: 'primary' | 'danger'
+  variant?: 'primary' | 'danger' | 'gold'
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
   type?: 'button' | 'submit' | 'reset'
   disabled?: boolean
@@ -307,6 +307,12 @@ const handleClick = (event: MouseEvent) => {
   -webkit-mask-size: contain;
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-position: center;
+}
+
+.btn-gold {
+    background-color: #ffd700;
+    cursor: default;
+    pointer-events: none;
 }
 
 @keyframes spin {
