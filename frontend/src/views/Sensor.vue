@@ -6,9 +6,13 @@
     import { onMounted, ref } from 'vue';
     import PageInput from '@/components/PageInput.vue';
     import Chart from '@/components/Chart.vue';
+import PageButton from '@/components/PageButton.vue';
     
     //Library for easy translation features
     const { t } = useI18n();
+
+    const startDate = ref<string>("");
+    const endDate = ref<string>("");
 
     const valueOk = ref<boolean>(true);
     const lastConnection_formatted = ref<string>("");
@@ -70,11 +74,13 @@
 </script>
 
 <template>
-    <BasePage location="home">
+    <BasePage location="sensor">
+    	<!-- Name of the sensor -->
         <BaseDiv class="headerDiv">
             <h1 class="marginless headerText"> {{data.alias != "" ? data.alias : data.name}} </h1>
         </BaseDiv>
 
+        <!-- Basic info panel -->
         <BaseDiv class="partDiv headerDiv">
             <div class="rowContainer">
                 <div class="leftDiv">
@@ -99,12 +105,28 @@
             </div>
         </BaseDiv>
 
+        <!-- Chart panel -->
         <BaseDiv class="headerDiv paddingless">
         	<h1 class="marginless headerText" style="margin-top: 10px;"> {{t("sensor.graph")}} </h1>
         	<Chart
        			:xData="dates"
         		:yData="measures"
          	/>
+
+          	<div class="dateInputWrapper">
+           		<div class="dateRow dateRow-left">
+           			<h1 class="marginless"> {{t("sensor.startDate")}}: </h1>
+           			<PageInput class="dateInput" type="date" v-model="startDate"></PageInput>
+            	</div>
+            	<div class="dateRow dateRow-right">
+           			<h1 class="marginless"> {{t("sensor.endDate")}}: </h1>
+           			<PageInput class="dateInput" type="date" v-model="endDate"></PageInput>
+            	</div>
+           	</div>
+
+            <div class="dateButtonWrapper">
+            	<PageButton style="min-width: 20%;"  class="inputDiv" variant="primary" :loading="false" rightIcon="/icons/RightArrow.svg"> {{t("sensor.fetch")}} </PageButton>
+            </div>
         </BaseDiv>
     </BasePage>
 </template>
@@ -125,6 +147,9 @@
 
     .headerDiv {
         margin-bottom: 30px;
+		flex-direction: column;
+		justify-content: flex-start;
+		align-items: center;
     }
 
     .partDiv {
@@ -138,6 +163,7 @@
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
+        width: 100%;
     }
 
     .leftDiv {
@@ -187,5 +213,82 @@
             margin-top: 20px;
             display: block;
         }
+    }
+
+    .dateInputWrapper {
+   		display: flex;
+    	flex-direction: row;
+
+     	@media(orientation: landscape) and (max-width: 1000px) {
+    		flex-direction: column;
+      	}
+
+       	@media(orientation: portrait) {
+     		flex-direction: column;
+       	}
+    }
+    
+    .dateRow {
+   		display: flex;
+    	flex-direction: row;
+    	width: 100%;
+    	justify-content: center;
+     	align-items: center;
+      	gap: 20px;
+
+       	margin-bottom: 10px;
+
+       	@media (orientation: portrait) {
+      		flex-direction: column;
+        	gap: 0px;
+     	}
+    }
+
+    .dateRow-right {
+   		justify-content: flex-end; 
+     	margin-right: 15px;
+
+     	@media (orientation: portrait) {
+    		justify-content: center;
+      		margin-right: 0;
+      	}
+
+       @media(orientation: landscape) and (max-width: 1000px) {
+    		justify-content: center;
+      		margin-right: 0;
+      	}
+    }
+
+    .dateRow-left {
+   		justify-content: flex-start; 
+     	margin-left: 15px;
+
+      	@media (orientation: portrait) {
+    		justify-content: center;
+      		margin-left: 0;
+      	}
+
+       @media(orientation: landscape) and (max-width: 1000px) {
+    		justify-content: center;
+      		margin-left: 0;
+      	}
+    }
+    
+    .dateInput {
+   		width: 40%;
+
+    	@media (orientation: portrait) {
+   			width: 90%;
+     	}
+    }
+
+    .dateButtonWrapper {
+   		width: 100%;
+     	display: flex;
+     	flex-direction: row;
+     	justify-content: center;
+     	align-items: center;
+     	margin-bottom: 10px;
+     	margin-top: 10px;
     }
 </style>
