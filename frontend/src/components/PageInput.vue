@@ -1,12 +1,20 @@
 <script setup lang="ts">
-import { ref, computed, useId } from 'vue'
-import { Eye, EyeOff, X, AlertCircle, CheckCircle } from 'lucide-vue-next'
+import { ref, computed, useId, useSlots } from 'vue'
+import {
+  Eye,
+  EyeOff,
+  X,
+  AlertCircle,
+  CheckCircle
+} from 'lucide-vue-next'
 
-// Props
+const slots = useSlots()
+
 const props = withDefaults(defineProps<{
   modelValue?: string | number
   label?: string
   type?: 'text' | 'password' | 'email' | 'number' | 'search' | 'url' | 'tel'
+         | 'date' | 'datetime-local' | 'time' | 'month' | 'week'
   placeholder?: string
   error?: string
   helperText?: string
@@ -19,7 +27,6 @@ const props = withDefaults(defineProps<{
   autocomplete?: string
   leftIcon?: any
   rightIcon?: any
-  changed?: () => void
 }>(), {
   type: 'text',
   placeholder: '',
@@ -27,26 +34,46 @@ const props = withDefaults(defineProps<{
   showPasswordToggle: true
 })
 
-// Emits
 const emit = defineEmits<{
   'update:modelValue': [value: string]
   'focus': [event: FocusEvent]
   'blur': [event: FocusEvent]
   'clear': []
+  'change': [value: string]
 }>()
 
-// State
 const inputId = useId()
 const inputRef = ref<HTMLInputElement>()
 const isFocused = ref(false)
 const showPassword = ref(false)
 
-// Computed
-const hasIcon = computed(() => {
-  return !!(props.leftIcon || props.rightIcon || props.showPasswordToggle)
+// True input type (handles password toggle)
+const inputType = computed(() => {
+  if (props.type === 'password' && showPassword.value) return 'text'
+  return props.type
 })
 
-// Methods
+// Show character count only for text‑ish types
+const showCharCount = computed(() => {
+  if (!props.maxlength) return false
+  const nonCharTypes = ['date', 'datetime-local', 'time', 'month', 'week', 'number']
+  return !nonCharTypes.includes(props.type)
+})
+
+// Whether any right icon is present
+const hasRightIcon = computed(() => {
+  return !!(
+    slots.rightIcon ||
+    props.rightIcon ||
+    (props.type === 'password' && props.showPasswordToggle) ||
+    (props.clearable && props.modelValue)
+  )
+})
+
+const hasIcon = computed(() => {
+  return !!(slots.leftIcon || props.leftIcon || hasRightIcon.value)
+})
+
 const handleInput = (event: Event) => {
   const target = event.target as HTMLInputElement
   emit('update:modelValue', target.value)
@@ -71,18 +98,12 @@ const togglePasswordVisibility = () => {
 
 <template>
   <div class="input-wrapper">
-    <!-- Label -->
-    <label 
-      v-if="label" 
-      :for="inputId" 
-      class="input-label"
-    >
+    <label v-if="label" :for="inputId" class="input-label">
       {{ label }}
       <span v-if="required" class="required-star">*</span>
     </label>
 
-    <!-- Input Container -->
-    <div 
+    <div
       class="input-container"
       :class="{
         'input-focused': isFocused,
@@ -92,7 +113,7 @@ const togglePasswordVisibility = () => {
       }"
     >
       <!-- Left Icon -->
-      <div v-if="$slots.leftIcon || leftIcon" class="icon-left">
+      <div v-if="slots.leftIcon || leftIcon" class="icon-left">
         <slot name="leftIcon">
           <component :is="leftIcon" v-if="leftIcon" class="icon" />
         </slot>
@@ -102,26 +123,26 @@ const togglePasswordVisibility = () => {
       <input
         :id="inputId"
         ref="inputRef"
-        :type="showPassword ? 'text' : type"
+        :type="inputType"
         :value="modelValue"
         :placeholder="placeholder"
         :disabled="disabled"
         :required="required"
         :maxlength="maxlength"
         :autocomplete="autocomplete"
-        v-on:change="changed"
         class="input-field"
         :class="{
-          'has-left-icon': $slots.leftIcon || leftIcon,
-          'has-right-icon': $slots.rightIcon || rightIcon || showPasswordToggle || (clearable && modelValue)
+          'has-left-icon': slots.leftIcon || leftIcon,
+          'has-right-icon': hasRightIcon
         }"
         @input="handleInput"
+        @change="emit('change', ($event.target as HTMLInputElement).value)"
         @focus="isFocused = true"
         @blur="handleBlur"
       />
 
       <!-- Password Toggle -->
-      <button 
+      <button
         v-if="type === 'password' && showPasswordToggle"
         type="button"
         class="icon-right password-toggle"
@@ -132,16 +153,16 @@ const togglePasswordVisibility = () => {
         <EyeOff v-else class="icon" />
       </button>
 
-      <!-- Right Icon -->
-      <div v-if="$slots.rightIcon || rightIcon" class="icon-right">
+      <!-- Custom Right Icon (slot or prop) -->
+      <div v-if="slots.rightIcon || rightIcon" class="icon-right">
         <slot name="rightIcon">
           <component :is="rightIcon" v-if="rightIcon" class="icon" />
         </slot>
       </div>
 
       <!-- Clear Button -->
-      <button 
-        v-if="clearable && modelValue" 
+      <button
+        v-if="clearable && modelValue"
         type="button"
         class="icon-right clear-button"
         @click="clearInput"
@@ -151,7 +172,7 @@ const togglePasswordVisibility = () => {
       </button>
     </div>
 
-    <!-- Helper Text / Error Message -->
+    <!-- Helper / Error message -->
     <div v-if="helperText || error" class="input-message">
       <AlertCircle v-if="error" class="message-icon error-icon" />
       <CheckCircle v-else-if="success" class="message-icon success-icon" />
@@ -160,8 +181,8 @@ const togglePasswordVisibility = () => {
       </span>
     </div>
 
-    <!-- Character Count -->
-    <div v-if="maxlength" class="char-count">
+    <!-- Character count -->
+    <div v-if="showCharCount" class="char-count">
       {{ String(modelValue || '').length }}/{{ maxlength }}
     </div>
   </div>
