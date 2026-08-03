@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { ref, computed } from 'vue'
+    import { ref, computed, onMounted, onUnmounted } from 'vue'
     import VChart from 'vue-echarts'
     import { use } from 'echarts/core'
     import { CanvasRenderer } from 'echarts/renderers'
@@ -20,6 +20,22 @@
     	GridComponent,
 		DataZoomComponent,
 	]);
+    
+    const lineColor = ref('')
+    
+    const updateColor = () => {
+      lineColor.value = getComputedStyle(document.documentElement)
+        .getPropertyValue('--div-border')
+        .trim()
+    }
+    
+    onMounted(() => {
+      updateColor()
+      // Watch for changes to the `data-theme` attribute
+      const observer = new MutationObserver(updateColor)
+      observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
+      onUnmounted(() => observer.disconnect())
+    })
 
     //Sample data
     // TODO: replace with props
@@ -28,16 +44,13 @@
      	yData: number[],
 	}>();
     
-    const xData = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-    const yData = [120, 200, 150, 80, 70, 110, 130];
-
     //Options to make it reactive
     const options = computed(() => ({
 		grid: {
-			left: 0,
-			right: 10,
-           	containLabel: false 
-     	},
+			left: 40,
+			right: 20,
+			containLabel: false,
+		},
 		tooltip: {
      		trigger: 'axis' //Show tooltip at the same X index
 		},
@@ -49,16 +62,30 @@
 		xAxis: {
 			type: 'category',
 			data: props.xData,
+			boundaryGap: false,
+			axisLabel: { show: false }, 
+			axisTick: { show: false },
+			axisLine: {
+				lineStyle: {
+					color: lineColor.value
+				}
+			}
 		},
 		yAxis: {
 			type: 'value',
+			boundaryGap: false,
+			axisLabel: {
+				margin: 10,
+				color: lineColor.value
+			},
 		},
 
 		series: [
 			{
 				data: props.yData,
 				type: 'line',
-				smooth: true
+				smooth: true,
+				color: lineColor.value,
 			}
 		],
 
