@@ -2,7 +2,7 @@
 import express, {Application} from 'express';
 import cors from 'cors';
 import AuthRoutes from './routes/AuthRoutes';
-import authentication from './middleware/authentication';
+import { authentication, errorHandler } from './middleware';
 import cookieParser from 'cookie-parser';
 
 //Creating the app
@@ -25,6 +25,14 @@ app.get('/health', (req, res) => {
 
 //middleware with token authentication
 app.use('/api', authentication)
+
+//------------------
+//private routes
+//------------------
+
+
+//at the end to handle all the possible errors
+app.use(errorHandler);
 
 
 

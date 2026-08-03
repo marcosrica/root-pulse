@@ -1,10 +1,10 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { login } from '../../services';
 import { UsersDatabase } from '../../database/Database';
 
 const loginService = new login(new UsersDatabase());
 
-const userLogin = async (req: Request, res: Response) => {
+const userLogin = async (req: Request, res: Response, next: NextFunction) => {
 
   const {username, password}: {username: string, password: string} = req.body;
   try {
@@ -24,28 +24,7 @@ res.cookie('token', tryLogin.token, {
     });
 
   } catch (error) {
-    if(error instanceof Error){
-      //errors of unfilled fields
-      if(error.message === 'username field must be filled'){
-        return res.status(400).json({ cause: "username field must be filled"});
-      };
-      if(error.message === 'password field must be filled'){
-        return res.status(400).json({ cause: "password field must be filled"});
-      };
-
-      //error of incorrect username
-      if(error.message === 'There is no username with this username'){
-        return res.status(400).json({ cause: "There is no user with the username provided"});
-      }
-
-      //error of invalid password
-      if(error.message === 'Invalid password'){
-        return res.status(400).json({ cause: "Invalid password"});
-      }
-      
-    }
-    console.error("internal error while login: ", error);
-    return res.status(500).json({ cause: "Unknown error ocurred in server"});
+    next(error);
   }
 };
 

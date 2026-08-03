@@ -48,5 +48,4 @@ export const authentication = async (req: Request, res: Response, next: NextFunc
     }
 }
 
-//when more middleware added this will change
-export default authentication;
+export default authentication
