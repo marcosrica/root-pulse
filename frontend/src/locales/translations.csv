@@ -18,6 +18,7 @@ home.sensorPassword,Sensor password,Contraseña del sensor
 
 sensor.lastMeasure,Last measure,Ultima medición
 sensor.alert,Alert value,Mínimo seguro
+sensor.graph,Evolution,Evolución
 
 profile.configuration,Configuration,Configuración
 profile.sensors,Sensors,Sensores
