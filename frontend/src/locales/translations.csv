@@ -16,6 +16,8 @@ home.addPlant,Add a new plant,Añadir una planta nueva
 home.sensorName,Sensor name,Nombre del sensor
 home.sensorPassword,Sensor password,Contraseña del sensor
 
+sensor.lastMeasure,Last measure,Ultima medición
+
 profile.configuration,Configuration,Configuración
 profile.sensors,Sensors,Sensores
 profile.name,Name,Nombre
