@@ -5,6 +5,7 @@
     import type { SensorInfo } from '@/Utilities/types/SensorInfo';
     import { onMounted, ref } from 'vue';
     import PageInput from '@/components/PageInput.vue';
+    import Chart from '@/components/Chart.vue';
     
     //Library for easy translation features
     const { t } = useI18n();
@@ -19,7 +20,7 @@
         minAlert: 30,
         lastConnection: new Date('August 3, 2026 04:28:00')
     };
-
+    
     const formatTime = (): string => {
         const diffMs = Date.now() - data.lastConnection.getTime()
         const seconds = Math.floor(Math.abs(diffMs) / 1000)
@@ -33,6 +34,31 @@
         if (days < 30)    return t('connection.daysAgo',    { n: days })
         if (days < 365)   return t('connection.monthsAgo',  { n: Math.floor(days / 30) })
         return t('connection.yearsAgo', { n: Math.floor(days / 365) })
+    }
+
+    //STRESS TEST
+    // Generate stress‑test data: 360 points, one every 2 minutes over 12 hours
+    const start = new Date('2026-08-03T08:00:00');
+    const pointCount = 100;
+    const intervalMinutes = 2; // every 2 minutes → 30 points per hour
+    
+    const dates: string[] = [];
+    const measures: number[] = [];
+    
+    for (let i = 0; i < pointCount; i++) {
+      // Timestamp: start + i * intervalMinutes
+      const time = new Date(start.getTime() + i * intervalMinutes * 60 * 1000);
+      dates.push(time.toISOString());
+    
+      // Value: a daily sinusoid (peak around midday, trough at night) + random noise
+      const hours = time.getHours() + time.getMinutes() / 60; // fractional hour
+      // Sine wave: period 24 hours, peak at 12:00, trough at 0:00
+      const base = 50 + 40 * Math.sin((hours - 6) * Math.PI / 12); // 10–90
+      const noise = (Math.random() - 0.5) * 15; // ±7.5%
+      const raw = base + noise;
+      // Clamp between 0 and 100, round to 1 decimal
+      const clamped = Math.min(100, Math.max(0, Math.round(raw * 10) / 10));
+      measures.push(clamped);
     }
     
     onMounted(() => {
@@ -49,7 +75,7 @@
             <h1 class="marginless headerText"> {{data.alias != "" ? data.alias : data.name}} </h1>
         </BaseDiv>
 
-        <BaseDiv class="partDiv">
+        <BaseDiv class="partDiv headerDiv">
             <div class="rowContainer">
                 <div class="leftDiv">
                     <h1 :class="['marginless', 'lastMeasureCuantity', valueOk ? 'Ok' : 'notOk']"> {{data.lastMeasure}}% </h1>
@@ -72,6 +98,13 @@
                 <p class="marginless"> {{t("connection.lastConnection")}} </p>
             </div>
         </BaseDiv>
+
+        <BaseDiv class="headerDiv paddingless">
+        	<Chart
+       			:xData="dates"
+        		:yData="measures"
+         	/>
+        </BaseDiv>
     </BasePage>
 </template>
 
@@ -80,6 +113,10 @@
         margin: 0px;
     }
 
+    .paddingless {
+    	padding: 0px;
+    }
+    
     .headerText {
         font-size: 40px;
         text-align: center;
