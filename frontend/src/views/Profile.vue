@@ -190,7 +190,6 @@ onMounted(() => {
                     <!-- Add new users, only accesible for admins -->
                     <BaseDiv class="inspectSensorBasicInfoWrapper" v-if="currentStatusWithSensor?.userPermission">
                         <h1 class="marginless sensorNameText centered notLastRow"> {{t("profile.addUser")}} </h1>
-                        <PageInput class="notLastRow" :placeholder="t('profile.addUsername')" v-model="searchedUsername"></PageInput>
 
                         <BaseDiv v-for="user in possibleUsersToAdd" class="sensorDiv">
                             <div class="sensorDivUsableSpace">
@@ -199,6 +198,8 @@ onMounted(() => {
                             <div class="sensorDivArrow">
                             </div>
                         </BaseDiv>
+                        
+                        <PageInput class="notLastRow" :placeholder="t('profile.addUsername')" v-model="searchedUsername"></PageInput>
                     </BaseDiv>
                 </div>
             </div>
