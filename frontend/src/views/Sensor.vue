@@ -6,7 +6,7 @@
     import { onMounted, ref } from 'vue';
     import PageInput from '@/components/PageInput.vue';
     import Chart from '@/components/Chart.vue';
-import PageButton from '@/components/PageButton.vue';
+    import PageButton from '@/components/PageButton.vue';
     
     //Library for easy translation features
     const { t } = useI18n();
@@ -50,19 +50,19 @@ import PageButton from '@/components/PageButton.vue';
     const measures: number[] = [];
     
     for (let i = 0; i < pointCount; i++) {
-      // Timestamp: start + i * intervalMinutes
-      const time = new Date(start.getTime() + i * intervalMinutes * 60 * 1000);
-      dates.push(time.toISOString());
-    
-      // Value: a daily sinusoid (peak around midday, trough at night) + random noise
-      const hours = time.getHours() + time.getMinutes() / 60; // fractional hour
-      // Sine wave: period 24 hours, peak at 12:00, trough at 0:00
-      const base = 50 + 40 * Math.sin((hours - 6) * Math.PI / 12); // 10–90
-      const noise = (Math.random() - 0.5) * 15; // ±7.5%
-      const raw = base + noise;
-      // Clamp between 0 and 100, round to 1 decimal
-      const clamped = Math.min(100, Math.max(0, Math.round(raw * 10) / 10));
-      measures.push(clamped);
+        // Timestamp: start + i * intervalMinutes
+        const time = new Date(start.getTime() + i * intervalMinutes * 60 * 1000);
+        dates.push(time.toISOString());
+      
+        // Value: a daily sinusoid (peak around midday, trough at night) + random noise
+        const hours = time.getHours() + time.getMinutes() / 60; // fractional hour
+        // Sine wave: period 24 hours, peak at 12:00, trough at 0:00
+        const base = 50 + 40 * Math.sin((hours - 6) * Math.PI / 12); // 10–90
+        const noise = (Math.random() - 0.5) * 15; // ±7.5%
+        const raw = base + noise;
+        // Clamp between 0 and 100, round to 1 decimal
+        const clamped = Math.min(100, Math.max(0, Math.round(raw * 10) / 10));
+        measures.push(clamped);
     }
     
     onMounted(() => {
@@ -107,26 +107,14 @@ import PageButton from '@/components/PageButton.vue';
 
         <!-- Chart panel -->
         <BaseDiv class="headerDiv paddingless">
-        	<h1 class="marginless headerText" style="margin-top: 10px;"> {{t("sensor.graph")}} </h1>
+            <div class="graphHeader">
+               	<h1 class="marginless headerText" style="margin-top: 10px;"> {{t("sensor.graph")}} </h1>
+                <PageButton :iconOnly="true" icon="/icons/Filter.svg" v-on:click="() => {  }"></PageButton>
+            </div>
         	<Chart
        			:xData="dates"
         		:yData="measures"
          	/>
-
-          	<div class="dateInputWrapper">
-           		<div class="dateRow dateRow-left">
-           			<h1 class="marginless"> {{t("sensor.startDate")}}: </h1>
-           			<PageInput class="dateInput" type="date" v-model="startDate"></PageInput>
-            	</div>
-            	<div class="dateRow dateRow-right">
-           			<h1 class="marginless"> {{t("sensor.endDate")}}: </h1>
-           			<PageInput class="dateInput" type="date" v-model="endDate"></PageInput>
-            	</div>
-           	</div>
-
-            <div class="dateButtonWrapper">
-            	<PageButton style="min-width: 20%;"  class="inputDiv" variant="primary" :loading="false" rightIcon="/icons/RightArrow.svg"> {{t("sensor.fetch")}} </PageButton>
-            </div>
         </BaseDiv>
     </BasePage>
 </template>
@@ -215,80 +203,18 @@ import PageButton from '@/components/PageButton.vue';
         }
     }
 
-    .dateInputWrapper {
-   		display: flex;
-    	flex-direction: row;
-
-     	@media(orientation: landscape) and (max-width: 1000px) {
-    		flex-direction: column;
-      	}
-
-       	@media(orientation: portrait) {
-     		flex-direction: column;
-       	}
-    }
-    
-    .dateRow {
-   		display: flex;
-    	flex-direction: row;
-    	width: 100%;
-    	justify-content: center;
-     	align-items: center;
-      	gap: 20px;
-
-       	margin-bottom: 10px;
-
-       	@media (orientation: portrait) {
-      		flex-direction: column;
-        	gap: 0px;
-     	}
-    }
-
-    .dateRow-right {
-   		justify-content: flex-end; 
-     	margin-right: 15px;
-
-     	@media (orientation: portrait) {
-    		justify-content: center;
-      		margin-right: 0;
-      	}
-
-       @media(orientation: landscape) and (max-width: 1000px) {
-    		justify-content: center;
-      		margin-right: 0;
-      	}
-    }
-
-    .dateRow-left {
-   		justify-content: flex-start; 
-     	margin-left: 15px;
-
-      	@media (orientation: portrait) {
-    		justify-content: center;
-      		margin-left: 0;
-      	}
-
-       @media(orientation: landscape) and (max-width: 1000px) {
-    		justify-content: center;
-      		margin-left: 0;
-      	}
-    }
-    
-    .dateInput {
-   		width: 40%;
-
-    	@media (orientation: portrait) {
-   			width: 90%;
-     	}
-    }
-
-    .dateButtonWrapper {
-   		width: 100%;
-     	display: flex;
-     	flex-direction: row;
-     	justify-content: center;
-     	align-items: center;
-     	margin-bottom: 10px;
-     	margin-top: 10px;
+    .graphHeader {
+        box-sizing: border-box;
+        padding-left: 10px;
+        padding-right: 10px;
+        
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        
+        align-items: center;
+        
+        gap: 20px;
     }
 </style>
