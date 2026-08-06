@@ -22,6 +22,7 @@ sensor.graph,Evolution,Evolución
 sensor.startDate,Start date,Fecha de inicio
 sensor.endDate,End date,Fecha de fin
 sensor.fetch,Fetch,Enviar
+sensor.wateringSchemes,Watering schemes,Patrones de riego
 
 profile.configuration,Configuration,Configuración
 profile.sensors,Sensors,Sensores
