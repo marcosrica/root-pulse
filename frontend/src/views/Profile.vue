@@ -75,6 +75,10 @@ const changedTheme = () => {
     }
 }
 
+const getTheme = () => {
+  info.theme = themeStore.currentTheme == "light";
+}
+
 const setThemeBasedOnBoolean = () => {
     if (info.theme) {
         currentTheme.value = t('theme.light');
@@ -133,6 +137,7 @@ const aliasChanged = () => {
 }
 
 onMounted(() => {
+    getTheme();
     setThemeBasedOnBoolean();
 
     currentLang.value = getVerboseLanguage(info.language) || "en";
