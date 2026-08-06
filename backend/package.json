@@ -12,7 +12,8 @@
     "dev": "nodemon --exec tsx src/server.ts",
     "clean": "rm -rf dist",
     "type-check": "tsc --noEmit",
-    "migrate": "knex migrate:latest"
+    "migrate": "knex migrate:latest",
+    "seed": "knex seed:run"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
