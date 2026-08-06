@@ -4,6 +4,7 @@ import Login from '@/views/auth/Login.vue'
 import CreateAccount from '@/views/auth/CreateAccount.vue'
 import Home from '@/views/Home.vue'
 import Profile from '@/views/Profile.vue'
+import Sensor from '@/views/Sensor.vue'
 
 
 const router = createRouter({
@@ -33,6 +34,11 @@ const router = createRouter({
       path: '/profile',
       name: 'profile',
       component: Profile,
+    },
+    {
+      path: '/sensor',
+      name: 'sensor',
+      component: Sensor,
     },
     /*
     {

@@ -16,6 +16,14 @@ home.addPlant,Add a new plant,Añadir una planta nueva
 home.sensorName,Sensor name,Nombre del sensor
 home.sensorPassword,Sensor password,Contraseña del sensor
 
+sensor.lastMeasure,Last measure,Ultima medición
+sensor.alert,Alert value,Mínimo seguro
+sensor.graph,Evolution,Evolución
+sensor.startDate,Start date,Fecha de inicio
+sensor.endDate,End date,Fecha de fin
+sensor.fetch,Fetch,Enviar
+sensor.wateringSchemes,Watering schemes,Patrones de riego
+
 profile.configuration,Configuration,Configuración
 profile.sensors,Sensors,Sensores
 profile.name,Name,Nombre
@@ -28,3 +36,11 @@ conf.language,Language,Idioma
 
 theme.dark,Dark,Oscuro
 theme.light,Light,Claro
+
+connection.justNow,Just now,Justo ahora
+connection.minutesAgo,{n} minutes ago,Hace {n} minutos
+connection.hoursAgo,{n} hours ago,Hace {n} horas
+connection.daysAgo,{n} days ago,Hace {n} días
+connection.monthsAgo,{n} months ago,Hace {n} meses
+connection.yearsAgo,{n} years ago,Hace {n} años
+connection.lastConnection,Last connection,Última conexión

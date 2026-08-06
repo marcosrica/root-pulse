@@ -17,11 +17,16 @@
     // Owned sensors
     // TODO: Create an API endpoint and connect to db
     let sensors: SensorInfo[] = [
-        {name:"Sensor 1", alias: "", lastMeasure: 61, minAlert: 30, lastConnection: new Date('December 17, 2021 04:28:00')},
-        {name:"Sensor 2", alias: "Alias 2", lastMeasure: 20, minAlert: 30, lastConnection: new Date(2021, 11, 17)},
-        {name:"Sensor 3", alias: "Alias 3", lastMeasure: 90, minAlert: 30, lastConnection: new Date(2026, 12, 31)},
-        {name:"Sensor 4", alias: "", lastMeasure: 80, minAlert: 30, lastConnection: new Date(2021, 11, 17, 4, 28, 0)},
+        {name:"Sensor1", alias: "", lastMeasure: 61, minAlert: 30, lastConnection: new Date('December 17, 2021 04:28:00')},
+        {name:"Sensor2", alias: "Alias 2", lastMeasure: 20, minAlert: 30, lastConnection: new Date(2021, 11, 17)},
+        {name:"Sensor3", alias: "Alias 3", lastMeasure: 90, minAlert: 30, lastConnection: new Date(2026, 12, 31)},
+        {name:"Sensor4", alias: "", lastMeasure: 80, minAlert: 30, lastConnection: new Date(2021, 11, 17, 4, 28, 0)},
     ]
+
+    //Change to check a specific sensor
+    const checkSensor = (sensorId:string) => {
+        location.href = "/sensor?id=" + sensorId;
+    }
 </script>
 
 <template>
@@ -30,10 +35,12 @@
             <h1 class="marginless headerText"> {{t("home.welcomeBack")}} </h1>
         </BaseDiv>
 
+        <!-- Panel with avaiable sensors -->
         <BaseDiv class="headerDiv">
             <h1 class="marginless headerText sensorsText"> {{t("home.checkSensors")}} </h1>
 
-            <BaseDiv v-for="sensor in sensors" class="sensorDiv">
+            <!-- Individual panel of a specific sensor -->
+            <BaseDiv v-for="sensor in sensors" class="sensorDiv" :click="() => { checkSensor(sensor.name) }">
                 <div class="sensorDivUsableSpace">
                     <p class="marginless sensorNameText" v-if="sensor.alias != ''"> {{sensor.alias}} </p>
                     <p class="marginless sensorNameText" v-else> {{sensor.name}} </p>

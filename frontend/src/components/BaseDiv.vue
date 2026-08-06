@@ -1,9 +1,11 @@
 <script setup lang="ts">
-
+const props = defineProps<{
+    click?:() => void,
+}>();
 </script>
 
 <template>
-    <div class="card">
+    <div class="card" v-on:click="click">
         <slot />
     </div>
 </template>
