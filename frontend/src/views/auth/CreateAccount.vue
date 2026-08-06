@@ -46,7 +46,7 @@ const handleCreateAccount = async () => {
         if (passwordsMatch.value) {
             //Trying to call the backend
             try {
-                const response = await apiClient.post("/user/newAccount", accountData);
+                const response = await apiClient.post("/auth/newAccount", accountData);
 
                 //Checking if everything went through fine
               if (response.status == 200) {
