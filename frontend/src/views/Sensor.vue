@@ -116,6 +116,23 @@
         		:yData="measures"
          	/>
         </BaseDiv>
+
+        <!-- Watering schemes -->
+        <BaseDiv class="headerDiv">
+            <h1 class="marginless headerText"> {{t("sensor.wateringSchemes")}} </h1>
+
+            <BaseDiv class="schemesDiv firstScheme">
+                <div class="sensorDivArrow clock" />
+                <p class="marginless timeText"> 12 horas y 55 minutos </p>
+                <div class="sensorDivArrow arrow" />
+            </BaseDiv>
+
+            <BaseDiv class="schemesDiv lastScheme">
+                <div class="sensorDivArrow wateringCan"/>
+                <p class="marginless timeText"> 12 horas y 55 minutos </p>
+                <div class="sensorDivArrow arrow" />
+            </BaseDiv>
+        </BaseDiv>
     </BasePage>
 </template>
 
@@ -134,10 +151,11 @@
     }
 
     .headerDiv {
+        display: flex;
         margin-bottom: 30px;
-		flex-direction: column;
-		justify-content: flex-start;
-		align-items: center;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
     }
 
     .partDiv {
@@ -216,5 +234,57 @@
         align-items: center;
         
         gap: 20px;
+    }
+
+    .sensorDivArrow {
+        height: 20px;
+        aspect-ratio: 1;
+        background-color: var(--div-border);
+        mask-size: contain;
+    }
+
+    .schemesDiv {
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 600px;
+        cursor: pointer;
+
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .firstScheme {
+        margin-top: 15px;
+        margin-bottom: 10px;
+    }
+
+    .lastScheme {
+        margin-bottom: 5px;
+    }
+    
+    .clock {
+        mask-image: url('/icons/Clock.svg');
+    }
+
+    .arrow {
+        mask-image: url('/icons/RightArrow.svg');
+    }
+
+    .wateringCan {
+        mask-image: url('/icons/WateringCan.svg');
+    }
+
+    .timeText {
+        font-size: 1dvw;
+
+        @media(orientation: portrait) {
+            font-size: 6dvw;
+
+            @media(min-width: 550px) {
+                font-size: 4dvw;
+            }
+        }
     }
 </style>
