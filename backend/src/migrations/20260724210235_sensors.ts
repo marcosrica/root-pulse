@@ -7,7 +7,9 @@ export async function up(knex: Knex): Promise<void> {
     table.string("name", 255).notNullable();
     table.text("password").notNullable();
     table.integer("measure_interval");
-    table.integer("max_value")
+    table.integer("max_value");
+    table.integer("min_alert");
+    table.timestamp("lastConnection");
   })
 }
 
