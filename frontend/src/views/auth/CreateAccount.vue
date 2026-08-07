@@ -47,11 +47,12 @@ const handleCreateAccount = async () => {
             //Trying to call the backend
             try {
                 const response = await apiClient.post("/auth/newAccount", accountData);
-
+                console.log(response)
+                
                 //Checking if everything went through fine
-              if (response.status == 200) {
+                if (response.status == 200 || response.status == 201) {
                     //Redirecting to the home page
-                    location.href = "/home";
+                    //location.href = "/home";
                 }
             }
             catch {

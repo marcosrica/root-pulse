@@ -4,9 +4,10 @@
     import { useI18n } from '@/locales/i18n';
     import type { SensorInfo } from '@/Utilities/types/SensorInfo';
     import PageInput from '@/components/PageInput.vue';
-    import { ref } from 'vue';
+    import { onMounted, ref } from 'vue';
     import PageButton from '@/components/PageButton.vue';
     import rightArrow from '@/../public/icons/RightArrow.svg';
+    import apiClient, { ApiError } from '@/Utilities/MakePetition';
     
     //Library for easy translation features
     const { t } = useI18n();
@@ -27,6 +28,22 @@
     const checkSensor = (sensorId:string) => {
         location.href = "/sensor?id=" + sensorId;
     }
+
+    onMounted(async () => {
+        try {
+            //Sending the petition
+            const response = await apiClient.get('/user/addSensor');
+          
+            if (response.status == 200) {
+                //Everything went on fine, and user was logged in
+                //Redirecting to home
+                location.href = "/home";
+            }
+        } catch (error) {
+            //Something happened along the way
+            console.error('Failed to login', error)
+        } 
+    })
 </script>
 
 <template>

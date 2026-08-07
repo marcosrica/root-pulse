@@ -16,7 +16,7 @@ interface ApiResponse<T = unknown> {
 }
 
 // Base url
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+const BASE_URL = import.meta.env.VITE_API_URL || '/api'
 
 // ─── Helper: Build URL with query params ───
 function buildUrl(url: string, params?: Record<string, string | number | boolean | undefined>): string {
@@ -70,6 +70,7 @@ async function api<T = unknown>(url: string, options: ApiOptions = {}): Promise<
   const fetchOptions: RequestInit = {
     method,
     headers: mergedHeaders,
+    credentials: 'include', 
   }
 
   // Add body for non-GET requests
@@ -117,6 +118,8 @@ async function api<T = unknown>(url: string, options: ApiOptions = {}): Promise<
       error instanceof Error ? error.message : 'Unknown error occurred',
       0
     )
+
+    console.error('Registration error:', error);
   }
 }
 
