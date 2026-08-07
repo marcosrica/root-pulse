@@ -1,4 +1,4 @@
-import mysql, { RowDataPacket, ResultSetHeader } from 'mysql2';
+import mysql, { RowDataPacket, ResultSetHeader, QueryResult, OkPacket } from 'mysql2';
 
 import dotenv from 'dotenv';
 dotenv.config();
@@ -74,4 +74,28 @@ export class UsersDatabase {
     return result.affectedRows > 0;
   }
   
+  //Add a new connection between a user and a sensor
+  async addConnection(userId:number, sensorId:number, admin:boolean): Promise<boolean> {
+    const [result] = await pool.query<ResultSetHeader>(`
+      INSERT INTO connections (user_id, sensor_id, alias, password, folder, edit_permission)
+      VALUES (?, ?, "", "", "", ?)
+      `, [userId, sensorId, admin]);
+
+    return result.affectedRows > 0;
+  }
+}
+
+export class SensorsDatabase {
+  async sensorExists(sensorName: string, sensorPassword: string): Promise<number> {
+    let id: number = -1;
+    const [result] = await pool.query<({ id: number } & RowDataPacket)[]>(
+      `SELECT id FROM sensors WHERE name = ? AND password = ?`, [sensorName, sensorPassword]
+    );
+
+    if (result.length > 0) {
+      id = result[0].id;
+    }
+
+    return id;
+  }
 }
