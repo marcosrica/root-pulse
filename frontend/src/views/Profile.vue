@@ -23,7 +23,7 @@ const { currentLocale, setLocale, availableLocales } = useI18n()
 const currentTheme = ref('Home');
 const currentLang = ref('English')
 const showSensorInfoPanel = ref(false);
-const sensorId = ref<number>(0);
+const sensorId:number = -1;
 
 const currentSensorAlias = ref<string>("");
 const currentStatusWithSensor = ref<connectedUsersInfo>();
@@ -173,8 +173,8 @@ const deleteSensor = async (sensorId: number) => {
 }
 
 const aliasChanged = () => {
-    if (currentSensorAlias.value == "") {
-        currentSensorAlias.value = sensors[sensorId.value]?.alias || "";
+    if (currentSensorAlias.value == "" && sensorId != -1) {
+        if(sensors.value != undefined) { currentSensorAlias.value = sensors.value[sensorId]?.alias || ""; }
     }
     else {
         //TODO: send alias to cloud
@@ -197,6 +197,7 @@ onMounted(() => {
         <!-- For updating sensor info -->
         <FloatingPanel :show="showSensorInfoPanel" :hide="() => { showSensorInfoPanel = false; }">
             <div class="inspectSensorContainer">
+                <!-- Floating panel's header -->
                 <div class="inspectSensorHeader">
                     <h1 class="inspectSensorName" v-if="sensors[sensorId]?.alias != ''"> {{sensors[sensorId]?.alias}} </h1>
                     <h1 class="inspectSensorName" v-else> {{sensors[sensorId]?.name}} </h1>
