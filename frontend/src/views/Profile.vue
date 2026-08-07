@@ -37,10 +37,10 @@ let info: userInfo = {
 }
 
 let sensors = ref<SensorInfo[]>([
-  { name: "Sensor 1", alias: "", lastMeasure: 61, minAlert: 30, lastConnection: new Date('December 17, 2021 04:28:00') },
-  { name: "Sensor 2", alias: "Alias 2", lastMeasure: 20, minAlert: 30, lastConnection: new Date(2021, 11, 17) },
-  { name: "Sensor 3", alias: "Alias 3", lastMeasure: 90, minAlert: 30, lastConnection: new Date(2026, 12, 31) },
-  { name: "Sensor 4", alias: "", lastMeasure: 80, minAlert: 30, lastConnection: new Date(2021, 11, 17, 4, 28, 0) },
+    { name: "Sensor1", alias: "", lastMeasure: 61, maxValue: 1024, minAlert: 30, lastConnection: new Date('December 17, 2021 04:28:00') },
+    { name: "Sensor2", alias: "Alias 2", lastMeasure: 20, maxValue: 1024, minAlert: 30, lastConnection: new Date(2021, 11, 17) },
+    { name: "Sensor3", alias: "Alias 3", lastMeasure: 90, maxValue: 1024, minAlert: 30, lastConnection: new Date(2026, 12, 31) },
+    { name: "Sensor4", alias: "", lastMeasure: 80, maxValue: 1024, minAlert: 30, lastConnection: new Date(2021, 11, 17, 4, 28, 0) },
 ]);
 
 let connections: connectedUsersInfo[] = [
@@ -159,6 +159,16 @@ const inspectSensor = (sensorIndex: number) => {
     console.log(sensorIndex);
 }
 
+const deleteSensor = (sensorId: number) => {
+    try {
+        const response = apiClient.delete('/api/user/deleteSensor?id=' + sensorId);
+        console.log(response);
+    }
+    catch (e) {
+        console.error(e);
+    }
+}
+
 const aliasChanged = () => {
     if (currentSensorAlias.value == "") {
         currentSensorAlias.value = sensors[sensorId.value]?.alias || "";
@@ -181,6 +191,7 @@ onMounted(() => {
 
 <template>
     <BasePage location="profile">
+        <!-- For updating sensor info -->
         <FloatingPanel :show="showSensorInfoPanel" :hide="() => { showSensorInfoPanel = false; }">
             <div class="inspectSensorContainer">
                 <div class="inspectSensorHeader">
@@ -288,7 +299,7 @@ onMounted(() => {
 
                 <div class="marginless sensorDivUsableSpace">
                     <PageButton :iconOnly="true" icon="/icons/Edit.svg" v-on:click="inspectSensor(index)" />
-                    <PageButton variant="danger" :iconOnly="true" icon="/icons/Trash.svg" />
+                    <PageButton variant="danger" :iconOnly="true" icon="/icons/Trash.svg" v-on:click="deleteSensor(index)" />
                 </div>
             </BaseDiv>
         </BaseDiv>
