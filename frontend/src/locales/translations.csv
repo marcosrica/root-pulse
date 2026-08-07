@@ -15,6 +15,7 @@ home.checkAll,Check all,Comprobar todas las plantas
 home.addPlant,Add a new plant,Añadir una planta nueva
 home.sensorName,Sensor name,Nombre del sensor
 home.sensorPassword,Sensor password,Contraseña del sensor
+home.add,Submit,Añadir
 
 sensor.lastMeasure,Last measure,Ultima medición
 sensor.alert,Alert value,Mínimo seguro
