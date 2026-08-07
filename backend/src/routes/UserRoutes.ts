@@ -1,9 +1,10 @@
 import { Router } from 'express';
-import { addSensor, getConnectedSensors } from '../ controllers/userControllers';
+import { addSensor, deleteSensor, getConnectedSensors } from '../ controllers/userControllers';
 
 const UserRoutes = Router();
 
 UserRoutes.post('/addSensor', addSensor);
-UserRoutes.get('/getConnectedSensors', getConnectedSensors)
+UserRoutes.get('/getConnectedSensors', getConnectedSensors);
+UserRoutes.delete('/deleteSensor', deleteSensor);
 
 export default UserRoutes;

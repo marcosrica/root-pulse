@@ -159,9 +159,9 @@ const inspectSensor = (sensorIndex: number) => {
     console.log(sensorIndex);
 }
 
-const deleteSensor = (sensorId: number) => {
+const deleteSensor = async (sensorId: number) => {
     try {
-        const response = apiClient.delete('/api/user/deleteSensor?id=' + sensorId);
+        const response = await apiClient.delete('/user/deleteSensor?id=' + sensorId);
         console.log(response);
     }
     catch (e) {
