@@ -1,6 +1,7 @@
 import mysql, { RowDataPacket, ResultSetHeader, QueryResult, OkPacket } from 'mysql2';
 
 import dotenv from 'dotenv';
+import { connectionInfo_ConnectionDB, SensorConnectionInfo, sensorInfo_ConnectionDB } from '../interfaces/SensorConnectionInfo';
 dotenv.config();
 
 const user = process.env.DB_USER;
@@ -82,6 +83,55 @@ export class UsersDatabase {
       `, [userId, sensorId, admin]);
 
     return result.affectedRows > 0;
+  }
+
+  //Get all the sensors connected to a certain user
+  async getConnectedSensors(userId: number): Promise<SensorConnectionInfo[]> {
+    //Getting the IDs of all the connected sensors
+    const [connections] = await pool.query<({ id: number } & RowDataPacket)[]>(`
+      SELECT sensor_id FROM connections WHERE user_id = ?
+      `, [userId]);
+
+    let result: SensorConnectionInfo[] = [];
+    console.log("COnnections: ", connections);
+
+    //Cycling through all the connected sensors
+    for (let i = 0; i < connections.length; i++) {
+      const ID: number = connections[i].sensor_id;
+      console.log("Sensor ID ", ID);
+
+      //Getting the data needed that lives in the sensors table
+      const [sensor] = await pool.query<sensorInfo_ConnectionDB[]>(`
+        SELECT name, max_value, min_alert, last_connection 
+        FROM sensors WHERE id = ?
+        `, [ID]);
+      
+      //Getting the data needed that lives in the connections table
+      const [connection] = await pool.query<connectionInfo_ConnectionDB[]>(`
+        SELECT alias
+        FROM connections
+        WHERE sensor_id = ? AND user_id = ?
+        `, [ID, userId]);
+
+      console.log(sensor);
+      console.log(connection);
+      
+      
+      //Compiling the data into a SensorConnectionInfo object
+      const row: SensorConnectionInfo = {
+        name: sensor[0].name,
+        alias: connection[0].alias,
+        lastMeasure: Math.floor(Math.random() * sensor[0].max_value),
+        minAlert: sensor[0].min_alert,
+        maxValue: sensor[0].max_value,
+        lastConnection: sensor[0].last_connection,
+      }
+
+      //Adding the data to the array
+      result.push(row);
+    }
+
+    return result;
   }
 }
 
