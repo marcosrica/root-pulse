@@ -12,6 +12,7 @@ import PageButton from '@/components/PageButton.vue';
 import FloatingPanel from '@/components/FloatingPanel.vue';
 import PageInput from '@/components/PageInput.vue';
 import type { connectedUsersInfo } from '@/Utilities/types/ConnectedUsersInfo';
+import apiClient from '@/Utilities/MakePetition';
 
 const themeStore = useThemeStore();
 
@@ -35,12 +36,12 @@ let info: userInfo = {
   id: 1,
 }
 
-let sensors: SensorInfo[] = [
-    {name:"Sensor 1", alias: "", lastMeasure: 61, minAlert: 30, lastConnection: new Date('December 17, 2021 04:28:00')},
-    {name:"Sensor 2", alias: "Alias 2", lastMeasure: 20, minAlert: 30, lastConnection: new Date(2021, 11, 17)},
-    {name:"Sensor 3", alias: "Alias 3", lastMeasure: 90, minAlert: 30, lastConnection: new Date(2026, 12, 31)},
-    {name:"Sensor 4", alias: "", lastMeasure: 80, minAlert: 30, lastConnection: new Date(2021, 11, 17, 4, 28, 0)},
-]
+let sensors = ref<SensorInfo[]>([
+  { name: "Sensor 1", alias: "", lastMeasure: 61, minAlert: 30, lastConnection: new Date('December 17, 2021 04:28:00') },
+  { name: "Sensor 2", alias: "Alias 2", lastMeasure: 20, minAlert: 30, lastConnection: new Date(2021, 11, 17) },
+  { name: "Sensor 3", alias: "Alias 3", lastMeasure: 90, minAlert: 30, lastConnection: new Date(2026, 12, 31) },
+  { name: "Sensor 4", alias: "", lastMeasure: 80, minAlert: 30, lastConnection: new Date(2021, 11, 17, 4, 28, 0) },
+]);
 
 let connections: connectedUsersInfo[] = [
   { userId: 2, username: "Manolo", userPermission: false },
@@ -87,6 +88,37 @@ const setThemeBasedOnBoolean = () => {
         currentTheme.value = t('theme.dark');
     }
 }
+
+const getConnectedSensors = async () => {
+        //Calling the backend. UserId will be added in the token
+        try {
+            const result = await apiClient.get('/user/getConnectedSensors');
+            console.log(result)
+            
+            if (result.status == 200) {
+                let parsedResult:SensorInfo[] = result.data as SensorInfo[];
+
+                for (let i = 0; i < parsedResult.length; i++) {
+                    let sensor:SensorInfo|undefined = parsedResult[i];
+
+                    if (sensor != undefined) {
+                        let lastM:number = sensor.lastMeasure;
+                        let minA: number = sensor.minAlert;
+
+                        console.log(lastM, "        ", minA);
+                      
+                        sensor.lastMeasure = Math.floor((lastM / sensor.maxValue) * 100);
+                          sensor.minAlert = Math.floor((minA / sensor.maxValue) * 100);
+                    }
+                }
+
+                sensors.value = parsedResult;
+            }
+        }
+        catch (e) {
+          console.error(e);
+        }
+    }
 
 const changedLanguage = () => {
     switch (currentLang.value) {
@@ -139,7 +171,8 @@ const aliasChanged = () => {
 onMounted(() => {
     getTheme();
     setThemeBasedOnBoolean();
-
+    getConnectedSensors();
+    
     currentLang.value = getVerboseLanguage(info.language) || "en";
 
     changedLanguage();
