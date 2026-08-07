@@ -37,10 +37,10 @@ let info: userInfo = {
 }
 
 let sensors = ref<SensorInfo[]>([
-    { name: "Sensor1", alias: "", lastMeasure: 61, maxValue: 1024, minAlert: 30, lastConnection: new Date('December 17, 2021 04:28:00') },
-    { name: "Sensor2", alias: "Alias 2", lastMeasure: 20, maxValue: 1024, minAlert: 30, lastConnection: new Date(2021, 11, 17) },
-    { name: "Sensor3", alias: "Alias 3", lastMeasure: 90, maxValue: 1024, minAlert: 30, lastConnection: new Date(2026, 12, 31) },
-    { name: "Sensor4", alias: "", lastMeasure: 80, maxValue: 1024, minAlert: 30, lastConnection: new Date(2021, 11, 17, 4, 28, 0) },
+    { id:0, name: "Sensor1", alias: "", lastMeasure: 61, maxValue: 1024, minAlert: 30, lastConnection: new Date('December 17, 2021 04:28:00') },
+    { id:1, name: "Sensor2", alias: "Alias 2", lastMeasure: 20, maxValue: 1024, minAlert: 30, lastConnection: new Date(2021, 11, 17) },
+    { id:2, name: "Sensor3", alias: "Alias 3", lastMeasure: 90, maxValue: 1024, minAlert: 30, lastConnection: new Date(2026, 12, 31) },
+    { id:3, name: "Sensor4", alias: "", lastMeasure: 80, maxValue: 1024, minAlert: 30, lastConnection: new Date(2021, 11, 17, 4, 28, 0) },
 ]);
 
 let connections: connectedUsersInfo[] = [
@@ -162,7 +162,10 @@ const inspectSensor = (sensorIndex: number) => {
 const deleteSensor = async (sensorId: number) => {
     try {
         const response = await apiClient.delete('/user/deleteSensor?id=' + sensorId);
-        console.log(response);
+
+        if (response.status == 200) {
+            getConnectedSensors();
+        }
     }
     catch (e) {
         console.error(e);
@@ -299,7 +302,7 @@ onMounted(() => {
 
                 <div class="marginless sensorDivUsableSpace">
                     <PageButton :iconOnly="true" icon="/icons/Edit.svg" v-on:click="inspectSensor(index)" />
-                    <PageButton variant="danger" :iconOnly="true" icon="/icons/Trash.svg" v-on:click="deleteSensor(index)" />
+                    <PageButton variant="danger" :iconOnly="true" icon="/icons/Trash.svg" v-on:click="deleteSensor(sensor.id)" />
                 </div>
             </BaseDiv>
         </BaseDiv>

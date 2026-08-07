@@ -1,4 +1,5 @@
 export type SensorInfo = {
+  id: number,
   name: string,
   alias: string,
   lastMeasure: number,

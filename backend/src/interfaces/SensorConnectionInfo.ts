@@ -1,6 +1,7 @@
 import { RowDataPacket } from "mysql2";
 
 export interface SensorConnectionInfo {
+  id:number,
   name: string,
   alias: string,
   lastMeasure: number,

@@ -119,6 +119,7 @@ export class UsersDatabase {
       
       //Compiling the data into a SensorConnectionInfo object
       const row: SensorConnectionInfo = {
+        id: ID,
         name: sensor[0].name,
         alias: connection[0].alias,
         lastMeasure: Math.floor(Math.random() * sensor[0].max_value),
@@ -132,6 +133,15 @@ export class UsersDatabase {
     }
 
     return result;
+  }
+
+  //Delete a sensor connection with a certain user
+  async deleteSensor(userId: number, sensorId: number): Promise<boolean> {
+    const [result] = await pool.query<ResultSetHeader>(`
+      DELETE FROM connections WHERE user_id = ? AND sensor_id = ?
+      `, [userId, sensorId]);
+
+    return result.affectedRows > 0;
   }
 }
 
