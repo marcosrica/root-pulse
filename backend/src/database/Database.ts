@@ -86,6 +86,7 @@ export class UsersDatabase {
 }
 
 export class SensorsDatabase {
+  //Checking if a sensor's credentials are valid
   async sensorExists(sensorName: string, sensorPassword: string): Promise<number> {
     let id: number = -1;
     const [result] = await pool.query<({ id: number } & RowDataPacket)[]>(

@@ -12,6 +12,7 @@
     //Library for easy translation features
     const { t } = useI18n();
 
+    let showAddSensorLoading = ref<boolean>(false);
     let newSensorName = ref<string>("");
     let newSensorPassword = ref<string>("");
     
@@ -32,9 +33,15 @@
     //Add a new sensor with its name and password
     //Access granted this way will inmediately have the administrator role 
     const addSensor = async () => {
+        //Getting beggining time of execution
+        const date = Date.now();
+        
         //Checking for non-null values on the form data
         if (newSensorName.value != "" && newSensorPassword.value != "") {
             //Sensor data is not null. Calling for backend
+            //Setting the button as loading
+            showAddSensorLoading.value = true; 
+            
             //Formatting the data
             const data = { name: newSensorName.value, password: newSensorPassword.value };
 
@@ -45,6 +52,11 @@
             }
             catch (error) {
                 console.error("Failed to add sensor: ", error);
+            }
+            finally {
+                const millisSpent = Date.now() - date;
+
+                setTimeout(() => { showAddSensorLoading.value = false }, (500 - millisSpent));
             }
         }
     }
@@ -98,7 +110,7 @@
             <PageInput class="inputDiv" type="text" v-model:modelValue="newSensorName" :placeholder="t('home.sensorName')"/>
             <PageInput class="inputDiv" type="password" v-model:modelValue="newSensorPassword" :placeholder="t('home.sensorPassword')" />
 
-            <PageButton class="inputDiv" variant="primary" :loading="false" rightIcon="/icons/RightArrow.svg" v-on:click="addSensor"> {{t("home.add")}} </PageButton>
+            <PageButton class="inputDiv" variant="primary" :loading="showAddSensorLoading" rightIcon="/icons/RightArrow.svg" v-on:click="addSensor"> {{t("home.add")}} </PageButton>
         </BaseDiv>
     </BasePage>
 </template>
