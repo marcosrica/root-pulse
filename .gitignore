@@ -48,3 +48,6 @@ frontend/*.timestamp-*-*.mjs
 frontend/.vscode/
 
 frontend/.env
+
+.zed
+.zed/*

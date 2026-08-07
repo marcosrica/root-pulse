@@ -12,6 +12,7 @@ const createNewAccount = async (req: Request, res: Response, next: NextFunction)
   try {
     //hacemos una llamada al servicio dentro del try-catch para trabajar con los errores que lanzamos
     const tryCreateAccount: UserRegistered = await registerService.execute(username, password);
+    console.log("Created account. Token: " + tryCreateAccount.token);
 
     //Si se produce algun error se captura y se trata en el catch pero si no se llega a la siguiente respuesta de exito
     //200 = OK; 201 = Created mas especifico,
@@ -20,7 +21,10 @@ const createNewAccount = async (req: Request, res: Response, next: NextFunction)
               httpOnly: true,  //restricts the access to the token via JavaScript
               // secure: true,   //token only send through https, we are in http
               // sameSite: 'strict', //cookie wont be went if the petition is from an external web
-              maxAge: 3 * 60 * 60 * 1000 //cookie duration (3 hours)
+              secure: false,   //token only send through https, we are in http
+              sameSite: 'lax',
+              maxAge: 3 * 60 * 60 * 1000, //cookie duration (3 hours)
+              path: '/',
     
           })
      return res.status(201).json({ 
