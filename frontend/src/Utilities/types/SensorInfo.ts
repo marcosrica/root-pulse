@@ -4,4 +4,5 @@ export type SensorInfo = {
   lastMeasure: number,
   minAlert:number,
   lastConnection: Date,
+  maxValue: number
 }

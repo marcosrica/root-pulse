@@ -7,29 +7,61 @@
     import { onMounted, ref } from 'vue';
     import PageButton from '@/components/PageButton.vue';
     import rightArrow from '@/../public/icons/RightArrow.svg';
-    import apiClient, { ApiError } from '@/Utilities/MakePetition';
+    import apiClient, { api, ApiError } from '@/Utilities/MakePetition';
     
     //Library for easy translation features
     const { t } = useI18n();
 
     let showAddSensorLoading = ref<boolean>(false);
+    let reloadSensorsWhenPossible = ref<boolean>(false);
     let newSensorName = ref<string>("");
     let newSensorPassword = ref<string>("");
     
     // Owned sensors
     // TODO: Create an API endpoint and connect to db
-    let sensors: SensorInfo[] = [
-        {name:"Sensor1", alias: "", lastMeasure: 61, minAlert: 30, lastConnection: new Date('December 17, 2021 04:28:00')},
-        {name:"Sensor2", alias: "Alias 2", lastMeasure: 20, minAlert: 30, lastConnection: new Date(2021, 11, 17)},
-        {name:"Sensor3", alias: "Alias 3", lastMeasure: 90, minAlert: 30, lastConnection: new Date(2026, 12, 31)},
-        {name:"Sensor4", alias: "", lastMeasure: 80, minAlert: 30, lastConnection: new Date(2021, 11, 17, 4, 28, 0)},
-    ]
+    let sensors = ref<SensorInfo[]>([
+        { name: "Sensor1", alias: "", lastMeasure: 61, maxValue: 1024, minAlert: 30, lastConnection: new Date('December 17, 2021 04:28:00') },
+        { name: "Sensor2", alias: "Alias 2", lastMeasure: 20, maxValue: 1024, minAlert: 30, lastConnection: new Date(2021, 11, 17) },
+        { name: "Sensor3", alias: "Alias 3", lastMeasure: 90, maxValue: 1024, minAlert: 30, lastConnection: new Date(2026, 12, 31) },
+        { name: "Sensor4", alias: "", lastMeasure: 80, maxValue: 1024, minAlert: 30, lastConnection: new Date(2021, 11, 17, 4, 28, 0) },
+    ]);
 
     //Change to check a specific sensor
     const checkSensor = (sensorId:string) => {
         location.href = "/sensor?id=" + sensorId;
     }
 
+    const getConnectedSensors = async () => {
+        //Calling the backend. UserId will be added in the token
+        try {
+            const result = await apiClient.get('/user/getConnectedSensors');
+            console.log(result)
+            
+            if (result.status == 200) {
+                let parsedResult:SensorInfo[] = result.data as SensorInfo[];
+
+                for (let i = 0; i < parsedResult.length; i++) {
+                    let sensor:SensorInfo|undefined = parsedResult[i];
+
+                    if (sensor != undefined) {
+                        let lastM:number = sensor.lastMeasure;
+                        let minA: number = sensor.minAlert;
+
+                        console.log(lastM, "        ", minA);
+                      
+                        sensor.lastMeasure = Math.floor((lastM / sensor.maxValue) * 100);
+                          sensor.minAlert = Math.floor((minA / sensor.maxValue) * 100);
+                    }
+                }
+
+                sensors.value = parsedResult;
+            }
+        }
+        catch (e) {
+          console.error(e);
+        }
+    }
+    
     //Add a new sensor with its name and password
     //Access granted this way will inmediately have the administrator role 
     const addSensor = async () => {
@@ -48,7 +80,11 @@
             //Making the petition
             try {
                 const response = await apiClient.post('/user/addSensor', data);
-                console.log(response);
+
+                if (response.status == 200) {
+                    //Everything went fine. Reloading the sensors in the background
+                    getConnectedSensors();
+                }
             }
             catch (error) {
                 console.error("Failed to add sensor: ", error);
@@ -57,19 +93,13 @@
                 //Checking how much time has passed since the beggining of the function
                 const millisSpent = Date.now() - date;
                 //Wait for half a second in the worst-case scenario before returning the button to its original state 
-                setTimeout(() => { showAddSensorLoading.value = false }, (500 - millisSpent));
+                setTimeout(() => { showAddSensorLoading.value = false; getConnectedSensors() }, (500 - millisSpent));
             }
         }
     }
-    
+
     onMounted(async () => {
-        try {
-            //Sending the petition
-            const response = await apiClient.get('/user/addSensor');
-        } catch (error) {
-            //Something happened along the way
-            console.error('Failed to login', error)
-        } 
+        getConnectedSensors();
     })
 </script>
 
