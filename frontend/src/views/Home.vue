@@ -25,17 +25,17 @@
         { id:0, name: "Sensor3", alias: "Alias 3", lastMeasure: 90, maxValue: 1024, minAlert: 30, lastConnection: new Date(2026, 12, 31) },
         { id:0, name: "Sensor4", alias: "", lastMeasure: 80, maxValue: 1024, minAlert: 30, lastConnection: new Date(2021, 11, 17, 4, 28, 0) },
     ]);
+    let bufferedSensors: SensorInfo[] | undefined = undefined;
 
     //Change to check a specific sensor
     const checkSensor = (sensorId:string) => {
         location.href = "/sensor?id=" + sensorId;
     }
 
-    const getConnectedSensors = async () => {
+    const getConnectedSensors = async (instant:boolean) => {
         //Calling the backend. UserId will be added in the token
         try {
             const result = await apiClient.get('/user/getConnectedSensors');
-            console.log(result)
             
             if (result.status == 200) {
                 let parsedResult:SensorInfo[] = result.data as SensorInfo[];
@@ -46,19 +46,31 @@
                     if (sensor != undefined) {
                         let lastM:number = sensor.lastMeasure;
                         let minA: number = sensor.minAlert;
-
-                        console.log(lastM, "        ", minA);
                       
                         sensor.lastMeasure = Math.floor((lastM / sensor.maxValue) * 100);
-                          sensor.minAlert = Math.floor((minA / sensor.maxValue) * 100);
+                        sensor.minAlert = Math.floor((minA / sensor.maxValue) * 100);
                     }
                 }
 
-                sensors.value = parsedResult;
+                if (instant) {
+                    sensors.value = parsedResult;
+                }
+                else {
+                    bufferedSensors = parsedResult;
+                }
             }
         }
         catch (e) {
           console.error(e);
+        }
+    }
+
+    const handleAddSensorCallback = () => {
+        showAddSensorLoading.value = false;
+
+        if (bufferedSensors != undefined) {
+            sensors.value = bufferedSensors;
+            bufferedSensors = undefined;
         }
     }
     
@@ -83,7 +95,7 @@
 
                 if (response.status == 200) {
                     //Everything went fine. Reloading the sensors in the background
-                    getConnectedSensors();
+                    getConnectedSensors(false);
                 }
             }
             catch (error) {
@@ -93,13 +105,13 @@
                 //Checking how much time has passed since the beggining of the function
                 const millisSpent = Date.now() - date;
                 //Wait for half a second in the worst-case scenario before returning the button to its original state 
-                setTimeout(() => { showAddSensorLoading.value = false; getConnectedSensors() }, (500 - millisSpent));
+                setTimeout(handleAddSensorCallback, (500 - millisSpent));
             }
         }
     }
 
     onMounted(async () => {
-        getConnectedSensors();
+        getConnectedSensors(true);
     })
 </script>
 
