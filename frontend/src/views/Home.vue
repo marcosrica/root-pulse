@@ -29,16 +29,30 @@
         location.href = "/sensor?id=" + sensorId;
     }
 
+    //Add a new sensor with its name and password
+    //Access granted this way will inmediately have the administrator role 
+    const addSensor = async () => {
+        //Checking for non-null values on the form data
+        if (newSensorName.value != "" && newSensorPassword.value != "") {
+            //Sensor data is not null. Calling for backend
+            //Formatting the data
+            const data = { name: newSensorName.value, password: newSensorPassword.value };
+
+            //Making the petition
+            try {
+                const response = await apiClient.post('/user/addSensor', data);
+                console.log(response);
+            }
+            catch (error) {
+                console.error("Failed to add sensor: ", error);
+            }
+        }
+    }
+    
     onMounted(async () => {
         try {
             //Sending the petition
             const response = await apiClient.get('/user/addSensor');
-          
-            if (response.status == 200) {
-                //Everything went on fine, and user was logged in
-                //Redirecting to home
-                location.href = "/home";
-            }
         } catch (error) {
             //Something happened along the way
             console.error('Failed to login', error)
@@ -68,7 +82,7 @@
                 </div>
             </BaseDiv>
 
-            <BaseDiv class="sensorDiv">
+            <BaseDiv class="sensorDiv" v-if="sensors.length > 4">
                 <div class="sensorDivUsableSpace">
                     <p class="marginless sensorNameText"> {{t("home.checkAll")}} </p>
                 </div>
@@ -77,13 +91,14 @@
             </BaseDiv>
         </BaseDiv>
 
+        <!-- Form for adding a new sensor -->
         <BaseDiv class="headerDiv addSensorDiv">
             <h1 class="marginless headerText sensorsText"> {{t("home.addPlant")}} </h1>
 
             <PageInput class="inputDiv" type="text" v-model:modelValue="newSensorName" :placeholder="t('home.sensorName')"/>
             <PageInput class="inputDiv" type="password" v-model:modelValue="newSensorPassword" :placeholder="t('home.sensorPassword')" />
 
-            <PageButton class="inputDiv" variant="primary" :loading="false" rightIcon="/icons/RightArrow.svg"> Añadir </PageButton>
+            <PageButton class="inputDiv" variant="primary" :loading="false" rightIcon="/icons/RightArrow.svg" v-on:click="addSensor"> {{t("home.add")}} </PageButton>
         </BaseDiv>
     </BasePage>
 </template>

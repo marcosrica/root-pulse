@@ -3,6 +3,6 @@ import { addSensor } from '../ controllers/userControllers';
 
 const UserRoutes = Router();
 
-UserRoutes.get('/addSensor', addSensor);
+UserRoutes.post('/addSensor', addSensor);
 
 export default UserRoutes;
