@@ -93,7 +93,6 @@ const getConnectedSensors = async () => {
         //Calling the backend. UserId will be added in the token
         try {
             const result = await apiClient.get('/user/getConnectedSensors');
-            console.log(result)
             
             if (result.status == 200) {
                 let parsedResult:SensorInfo[] = result.data as SensorInfo[];
@@ -104,8 +103,6 @@ const getConnectedSensors = async () => {
                     if (sensor != undefined) {
                         let lastM:number = sensor.lastMeasure;
                         let minA: number = sensor.minAlert;
-
-                        console.log(lastM, "        ", minA);
                       
                         sensor.lastMeasure = Math.floor((lastM / sensor.maxValue) * 100);
                           sensor.minAlert = Math.floor((minA / sensor.maxValue) * 100);
