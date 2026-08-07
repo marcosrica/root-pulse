@@ -56,7 +56,13 @@
                     sensors.value = parsedResult;
                 }
                 else {
-                    bufferedSensors = parsedResult;
+                    if (showAddSensorLoading.value) {
+                        bufferedSensors = parsedResult;
+                    }
+                    else {
+                        bufferedSensors = undefined;
+                        sensors.value = parsedResult;
+                    }
                 }
             }
         }
