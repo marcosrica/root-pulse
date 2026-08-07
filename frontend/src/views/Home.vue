@@ -54,8 +54,9 @@
                 console.error("Failed to add sensor: ", error);
             }
             finally {
+                //Checking how much time has passed since the beggining of the function
                 const millisSpent = Date.now() - date;
-
+                //Wait for half a second in the worst-case scenario before returning the button to its original state 
                 setTimeout(() => { showAddSensorLoading.value = false }, (500 - millisSpent));
             }
         }
