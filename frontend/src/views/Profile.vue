@@ -183,12 +183,13 @@ const aliasChanged = async () => {
             
             //Making the petition
             const response = await apiClient.post('/user/changeAlias', data);
-            console.log(response);
             
-            if (response.ok) {
-                  sensor.alias = currentSensorAlias.value;
+          if (response.ok) {
+                //Everything went fine. Changing the alias on the frontend
+                sensor.alias = currentSensorAlias.value;
             }
-            else {
+          else {
+                //An error ocurred. Returning to base state
                 currentSensorAlias.value = sensor.alias;
             }
         }
