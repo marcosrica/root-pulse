@@ -31,11 +31,11 @@ const currentSensorAlias = ref<string>("");
 const currentStatusWithSensor = ref<connectedUsersInfo>();
 const searchedUsername = ref<string>("");
 
-let info: userInfo = {
+let info = ref<userInfo>({
     username: "TestUser",
     language: "en",
-    theme: false,
-}
+    light_mode: false,
+});
 
 let sensors = ref<SensorInfo[]>([]);
 
@@ -118,7 +118,7 @@ const getUserInfo = async () => {
     console.log(response);
     
     if (response.ok) {
-      
+        info.value = response.data as userInfo;
     }
 }
 
@@ -201,10 +201,10 @@ const aliasChanged = async () => {
     } 
 }
 
-onMounted(() => {
+onMounted(async () => {
+    await getUserInfo();
     getTheme();
     setThemeBasedOnBoolean();
-    getUserInfo();
     getConnectedSensors();
     
     currentLang.value = getVerboseLanguage(info.language) || "en";

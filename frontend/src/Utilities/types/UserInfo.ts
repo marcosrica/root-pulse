@@ -1,5 +1,5 @@
 export type userInfo = {
   username: string,
   language: string,
-  theme: boolean,
+  light_mode: boolean,
 }
