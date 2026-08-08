@@ -102,6 +102,10 @@
                 if (response.status == 200) {
                     //Everything went fine. Reloading the sensors in the background
                     getConnectedSensors(false);
+
+                    //removing the credentials, so that another one can be easily typed
+                    newSensorName.value = "";
+                    newSensorPassword.value = "";
                 }
             }
             catch (error) {
