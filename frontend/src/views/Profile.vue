@@ -61,23 +61,26 @@ let possibleUsersToAdd: userInfo[] = [
   { username: "Laura", language: "en", theme: false, id: 1 },
 ]
 
-const changedTheme = () => {
+const changedTheme = async () => {
     if (currentTheme.value == t("theme.dark")) {
         themeStore.setTheme('dark');
-        info.theme = false;
+        info.value.light_mode = false;
     }
     else {
         themeStore.setTheme('light');
-        info.theme = true;
+        info.value.light_mode = true;
     }
+
+    const response = await apiClient.post('/user/theme', { theme: info.value.light_mode });
+    console.log(response);
 }
 
 const getTheme = () => {
-  info.theme = themeStore.currentTheme == "light";
+  info.value.light_mode = themeStore.currentTheme == "light";
 }
 
 const setThemeBasedOnBoolean = () => {
-    if (info.theme) {
+    if (info.value.light_mode) {
         currentTheme.value = t('theme.light');
     }
     else {
@@ -118,6 +121,7 @@ const getUserInfo = async () => {
     
     if (response.ok) {
         info.value = response.data as userInfo;
+        console.log(info.value);
     }
 }
 
@@ -202,8 +206,8 @@ const aliasChanged = async () => {
 
 onMounted(async () => {
     await getUserInfo();
-    getTheme();
     setThemeBasedOnBoolean();
+    changedTheme();
     getConnectedSensors();
     
     currentLang.value = getVerboseLanguage(info.language) || "en";
