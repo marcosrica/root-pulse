@@ -3,6 +3,7 @@ import mysql, { RowDataPacket, ResultSetHeader, QueryResult, OkPacket } from 'my
 import dotenv from 'dotenv';
 import { connectionInfo_ConnectionDB, SensorConnectionInfo, sensorInfo_ConnectionDB } from '../interfaces/SensorConnectionInfo';
 import { Pool } from 'mysql2/typings/mysql/lib/Pool';
+import { UserInfo } from '../interfaces/UserInfo';
 dotenv.config();
 
 const user = process.env.DB_USER;
@@ -145,6 +146,7 @@ export class UsersDatabase {
     return result.affectedRows > 0;
   }
 
+  //Change the alias a user has given to a certain sensor
   async changeAlias(userId: number, sensorId: number, newAlias: string): Promise<boolean> {
     const [response] = await pool.query<ResultSetHeader>(`
       UPDATE connections
@@ -155,6 +157,21 @@ export class UsersDatabase {
     console.log(response.affectedRows);
     
     return response.affectedRows == 1;
+  }
+
+  //Get the user's information
+  async getUserInfo(userId: number): Promise<UserInfo | undefined> {
+    const [response] = await pool.query<UserInfo[]>(`
+      SELECT username, light_mode, language FROM users
+      WHERE id = ?
+      `, [userId]);
+
+    if (response.length > 0) {
+      return response[0];
+    }
+    else {
+      return undefined;
+    }
   }
 }
 

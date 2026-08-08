@@ -9,8 +9,15 @@ const getUserInfo = async (req: Request, res: Response, next: NextFunction) => {
   
   if (userId != -1) {
     //The user is authenticated, and hasn't bypassed the protection layers
-    
-    return res.status(200).send("OK");
+    const db: UsersDatabase = new UsersDatabase();
+    const response = await db.getUserInfo(userId);
+
+    if (response != undefined) {
+      return res.status(200).json(response);
+    }
+    else {
+      return res.status(500).json({ cause: "Internal server error" });
+    }
   }
   else {
     return res.status(401).json({ cause: "No token present" });
