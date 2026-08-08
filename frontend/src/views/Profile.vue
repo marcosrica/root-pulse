@@ -20,6 +20,8 @@ const themeStore = useThemeStore();
 const { t } = useI18n();
 const { currentLocale, setLocale, availableLocales } = useI18n()
 
+const showUserInfoLoading = ref<boolean>(true);
+
 const currentTheme = ref('Home');
 const currentLang = ref('English')
 const showSensorInfoPanel = ref(false);
@@ -30,18 +32,12 @@ const currentStatusWithSensor = ref<connectedUsersInfo>();
 const searchedUsername = ref<string>("");
 
 let info: userInfo = {
-  username: "TestUser",
-  language: "en",
-  theme: false,
-  id: 1,
+    username: "TestUser",
+    language: "en",
+    theme: false,
 }
 
-let sensors = ref<SensorInfo[]>([
-    { id:0, name: "Sensor1", alias: "", lastMeasure: 61, maxValue: 1024, minAlert: 30, lastConnection: new Date('December 17, 2021 04:28:00') },
-    { id:1, name: "Sensor2", alias: "Alias 2", lastMeasure: 20, maxValue: 1024, minAlert: 30, lastConnection: new Date(2021, 11, 17) },
-    { id:2, name: "Sensor3", alias: "Alias 3", lastMeasure: 90, maxValue: 1024, minAlert: 30, lastConnection: new Date(2026, 12, 31) },
-    { id:3, name: "Sensor4", alias: "", lastMeasure: 80, maxValue: 1024, minAlert: 30, lastConnection: new Date(2021, 11, 17, 4, 28, 0) },
-]);
+let sensors = ref<SensorInfo[]>([]);
 
 let connections: connectedUsersInfo[] = [
   { userId: 2, username: "Manolo", userPermission: false },
@@ -116,6 +112,15 @@ const getConnectedSensors = async () => {
           console.error(e);
         }
     }
+
+const getUserInfo = async () => {
+    const response = await apiClient.get('/user/info');
+    console.log(response);
+    
+    if (response.ok) {
+      
+    }
+}
 
 const changedLanguage = () => {
     switch (currentLang.value) {
@@ -199,6 +204,7 @@ const aliasChanged = async () => {
 onMounted(() => {
     getTheme();
     setThemeBasedOnBoolean();
+    getUserInfo();
     getConnectedSensors();
     
     currentLang.value = getVerboseLanguage(info.language) || "en";
