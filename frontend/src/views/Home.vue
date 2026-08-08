@@ -86,7 +86,9 @@
     
     //Add a new sensor with its name and password
     //Access granted this way will inmediately have the administrator role 
-    const addSensor = async () => {
+    const addSensor = async (e:Event) => {
+        //Avoiding a full page reload whenever the form is submitted
+        e.preventDefault();
         //Getting beggining time of execution
         const date = Date.now();
         
@@ -160,10 +162,15 @@
         <BaseDiv class="headerDiv addSensorDiv">
             <h1 class="marginless headerText sensorsText"> {{t("home.addPlant")}} </h1>
 
-            <PageInput class="inputDiv" type="text" v-model:modelValue="newSensorName" :placeholder="t('home.sensorName')"/>
-            <PageInput class="inputDiv" type="password" v-model:modelValue="newSensorPassword" :placeholder="t('home.sensorPassword')" />
-
-            <PageButton class="inputDiv" variant="primary" :loading="showAddSensorLoading" rightIcon="/icons/RightArrow.svg" v-on:click="addSensor"> {{t("home.add")}} </PageButton>
+            <form 
+                style="width: 100%;display: flex; flex-direction: column;align-items: center; justify-content: center;"
+                v-on:submit="addSensor"
+            >
+                <PageInput class="inputDiv" type="text" v-model:modelValue="newSensorName" :placeholder="t('home.sensorName')"/>
+                <PageInput class="inputDiv" type="password" v-model:modelValue="newSensorPassword" :placeholder="t('home.sensorPassword')" />
+                
+                <PageButton class="inputDiv" variant="primary" :loading="showAddSensorLoading" rightIcon="/icons/RightArrow.svg" type="submit"> {{t("home.add")}} </PageButton>
+            </form>
         </BaseDiv>
     </BasePage>
 </template>
