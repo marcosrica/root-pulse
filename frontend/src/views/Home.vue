@@ -8,8 +8,8 @@
     import PageButton from '@/components/PageButton.vue';
     import rightArrow from '@/../public/icons/RightArrow.svg';
     import apiClient, { api, ApiError } from '@/Utilities/MakePetition';
-import { useThemeStore } from '@/stores/theme';
-import type { userInfo } from '@/Utilities/types/UserInfo';
+    import { useThemeStore } from '@/stores/theme';
+    import type { userInfo } from '@/Utilities/types/UserInfo';
     
     //Library for easy translation features
     const { t, setLocale, currentLocale } = useI18n();
