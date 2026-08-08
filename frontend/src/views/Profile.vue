@@ -179,7 +179,7 @@ const aliasChanged = async () => {
         if (sensor != undefined) {
             //Sending the alias to the backend, for it to be stored
             //Setting the petition's body
-            const data = {sensor: sensors.value[sensorId]?.name, alias: currentSensorAlias.value}
+            const data = {sensor: sensors.value[sensorId]?.id, alias: currentSensorAlias.value}
             
             //Making the petition
             const response = await apiClient.post('/user/changeAlias', data);

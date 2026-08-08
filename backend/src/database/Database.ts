@@ -2,6 +2,7 @@ import mysql, { RowDataPacket, ResultSetHeader, QueryResult, OkPacket } from 'my
 
 import dotenv from 'dotenv';
 import { connectionInfo_ConnectionDB, SensorConnectionInfo, sensorInfo_ConnectionDB } from '../interfaces/SensorConnectionInfo';
+import { Pool } from 'mysql2/typings/mysql/lib/Pool';
 dotenv.config();
 
 const user = process.env.DB_USER;
@@ -142,6 +143,18 @@ export class UsersDatabase {
       `, [userId, sensorId]);
 
     return result.affectedRows > 0;
+  }
+
+  async changeAlias(userId: number, sensorId: number, newAlias: string): Promise<boolean> {
+    const [response] = await pool.query<ResultSetHeader>(`
+      UPDATE connections
+      SET alias = ?
+      WHERE user_id = ? AND sensor_id = ?
+      `, [newAlias, userId, sensorId]);
+
+    console.log(response.affectedRows);
+    
+    return response.affectedRows == 1;
   }
 }
 
