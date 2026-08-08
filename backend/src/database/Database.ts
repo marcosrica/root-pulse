@@ -173,6 +173,16 @@ export class UsersDatabase {
       return undefined;
     }
   }
+
+  async setTheme(userId: number, theme: boolean): Promise<boolean> {
+    const [response] = await pool.query<ResultSetHeader>(`
+      UPDATE users
+      SET light_mode = ?
+      WHERE id = ?
+      `, [theme, userId]);
+
+    return response.affectedRows > 0;
+  }
 }
 
 export class SensorsDatabase {

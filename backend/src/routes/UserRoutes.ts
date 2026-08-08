@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { addSensor, changeAlias, deleteSensor, getConnectedSensors, getUserInfo } from '../ controllers/userControllers';
+import { addSensor, changeAlias, deleteSensor, getConnectedSensors, getUserInfo, setTheme } from '../ controllers/userControllers';
 
 const UserRoutes = Router();
 
@@ -8,5 +8,6 @@ UserRoutes.get('/getConnectedSensors', getConnectedSensors);
 UserRoutes.delete('/deleteSensor', deleteSensor);
 UserRoutes.post('/changeAlias', changeAlias);
 UserRoutes.get('/info', getUserInfo);
+UserRoutes.post('/theme', setTheme);
 
 export default UserRoutes;

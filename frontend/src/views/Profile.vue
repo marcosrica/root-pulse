@@ -115,7 +115,6 @@ const getConnectedSensors = async () => {
 
 const getUserInfo = async () => {
     const response = await apiClient.get('/user/info');
-    console.log(response);
     
     if (response.ok) {
         info.value = response.data as userInfo;
