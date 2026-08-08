@@ -8,9 +8,11 @@
     import PageButton from '@/components/PageButton.vue';
     import rightArrow from '@/../public/icons/RightArrow.svg';
     import apiClient, { api, ApiError } from '@/Utilities/MakePetition';
+import { useThemeStore } from '@/stores/theme';
+import type { userInfo } from '@/Utilities/types/UserInfo';
     
     //Library for easy translation features
-    const { t } = useI18n();
+    const { t, setLocale, currentLocale } = useI18n();
 
     let showAddSensorLoading = ref<boolean>(false);
     let reloadSensorsWhenPossible = ref<boolean>(false);
@@ -18,15 +20,24 @@
     let newSensorPassword = ref<string>("");
     
     // Owned sensors
-    // TODO: Create an API endpoint and connect to db
-    let sensors = ref<SensorInfo[]>([
-        { id:0, name: "Sensor1", alias: "", lastMeasure: 61, maxValue: 1024, minAlert: 30, lastConnection: new Date('December 17, 2021 04:28:00') },
-        { id:0, name: "Sensor2", alias: "Alias 2", lastMeasure: 20, maxValue: 1024, minAlert: 30, lastConnection: new Date(2021, 11, 17) },
-        { id:0, name: "Sensor3", alias: "Alias 3", lastMeasure: 90, maxValue: 1024, minAlert: 30, lastConnection: new Date(2026, 12, 31) },
-        { id:0, name: "Sensor4", alias: "", lastMeasure: 80, maxValue: 1024, minAlert: 30, lastConnection: new Date(2021, 11, 17, 4, 28, 0) },
-    ]);
+    let sensors = ref<SensorInfo[]>([]);
     let bufferedSensors: SensorInfo[] | undefined = undefined;
 
+    const themeStore = useThemeStore();
+    const getUserData = async () => {
+        const response = await apiClient.get('/user/info');
+        
+        if (response.ok) {
+            let info = response.data as userInfo;
+
+            if (info.language != currentLocale.value) {
+                setLocale(info.language);
+            }
+
+            themeStore.setTheme(info.light_mode ? 'light' : 'dark');
+        }
+    }
+    
     //Change to check a specific sensor
     const checkSensor = (sensorId:string) => {
         location.href = "/sensor?id=" + sensorId;
@@ -123,6 +134,8 @@
     }
 
     onMounted(async () => {
+        await getUserData();
+      
         getConnectedSensors(true);
     })
 </script>
