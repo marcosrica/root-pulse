@@ -174,12 +174,24 @@ export class UsersDatabase {
     }
   }
 
+  //Setting the theme (light or dark) for a specific user
   async setTheme(userId: number, theme: boolean): Promise<boolean> {
     const [response] = await pool.query<ResultSetHeader>(`
       UPDATE users
       SET light_mode = ?
       WHERE id = ?
       `, [theme, userId]);
+
+    return response.affectedRows > 0;
+  }
+
+  //Setting the language for a specific user
+  async setLanguage(userId: number, language: string): Promise<boolean> {
+    const [response] = await pool.query<ResultSetHeader>(`
+      UPDATE users
+      SET language = ?
+      WHERE id = ?
+      `, [language, userId]);
 
     return response.affectedRows > 0;
   }

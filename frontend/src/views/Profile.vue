@@ -55,10 +55,10 @@ let connections: connectedUsersInfo[] = [
 ];
 
 let possibleUsersToAdd: userInfo[] = [
-  { username: "Juan", language: "en", theme: false, id: 1 },
-  { username: "Claudia", language: "en", theme: false, id: 1 },
-  { username: "Manolo", language: "en", theme: false, id: 1 },
-  { username: "Laura", language: "en", theme: false, id: 1 },
+  { username: "Juan",    language: "en", light_mode: false },
+  { username: "Claudia", language: "en", light_mode: false },
+  { username: "Manolo",  language: "en", light_mode: false },
+  { username: "Laura",   language: "en", light_mode: false },
 ]
 
 const changedTheme = async () => {
@@ -72,7 +72,6 @@ const changedTheme = async () => {
     }
 
     const response = await apiClient.post('/user/theme', { theme: info.value.light_mode });
-    console.log(response);
 }
 
 const getTheme = () => {
@@ -125,18 +124,23 @@ const getUserInfo = async () => {
     }
 }
 
-const changedLanguage = () => {
+const changedLanguage = async () => {
+    let newLang:string = currentLocale.value; //Fallback 
     switch (currentLang.value) {
         case "English":
-            setLocale("en");
+            newLang = "en";
             break;
 
-        case "Español":
-            setLocale("es");
+      case "Español":
+            newLang = "es";
             break;
     }
 
+    setLocale(newLang);
     setThemeBasedOnBoolean();
+
+    const response = await apiClient.post('/user/language', { language: newLang });
+    console.log(response);
 }
 
 const getVerboseLanguage = (lang: string) => {
@@ -210,7 +214,7 @@ onMounted(async () => {
     changedTheme();
     getConnectedSensors();
     
-    currentLang.value = getVerboseLanguage(info.language) || "en";
+    currentLang.value = getVerboseLanguage(info.value.language) || "English";
 
     changedLanguage();
 });
