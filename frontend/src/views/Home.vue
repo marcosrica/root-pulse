@@ -78,6 +78,10 @@
             sensors.value = bufferedSensors;
             bufferedSensors = undefined;
         }
+
+        //removing the credentials, so that another one can be easily typed
+        newSensorName.value = "";
+        newSensorPassword.value = "";
     }
     
     //Add a new sensor with its name and password
@@ -102,10 +106,6 @@
                 if (response.status == 200) {
                     //Everything went fine. Reloading the sensors in the background
                     getConnectedSensors(false);
-
-                    //removing the credentials, so that another one can be easily typed
-                    newSensorName.value = "";
-                    newSensorPassword.value = "";
                 }
             }
             catch (error) {
