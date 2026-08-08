@@ -23,7 +23,7 @@ const { currentLocale, setLocale, availableLocales } = useI18n()
 const currentTheme = ref('Home');
 const currentLang = ref('English')
 const showSensorInfoPanel = ref(false);
-const sensorId:number = -1;
+let sensorId:number = -1;
 
 const currentSensorAlias = ref<string>("");
 const currentStatusWithSensor = ref<connectedUsersInfo>();
@@ -142,9 +142,9 @@ const getVerboseLanguage = (lang: string) => {
 }
 
 const inspectSensor = (sensorIndex: number) => {
-    sensorId.value = sensorIndex;
+    sensorId = sensorIndex;
     showSensorInfoPanel.value = true;
-    currentSensorAlias.value = sensors[sensorIndex]?.alias || "";
+    currentSensorAlias.value = sensors.value[sensorIndex]?.alias || "";
 
     if (sensorIndex == 0) {
         currentStatusWithSensor.value = { userId: 1, username: "TestUser", userPermission: false };
@@ -169,13 +169,30 @@ const deleteSensor = async (sensorId: number) => {
     }
 }
 
-const aliasChanged = () => {
+const aliasChanged = async () => {
     if (currentSensorAlias.value == "" && sensorId != -1) {
         if(sensors.value != undefined) { currentSensorAlias.value = sensors.value[sensorId]?.alias || ""; }
     }
     else {
-        //TODO: send alias to cloud
-    }
+        const sensor: SensorInfo|undefined = sensors.value[sensorId];
+
+        if (sensor != undefined) {
+            //Sending the alias to the backend, for it to be stored
+            //Setting the petition's body
+            const data = {sensor: sensors.value[sensorId]?.name, alias: currentSensorAlias.value}
+            
+            //Making the petition
+            const response = await apiClient.post('/user/changeAlias', data);
+            console.log(response);
+            
+            if (response.ok) {
+                  sensor.alias = currentSensorAlias.value;
+            }
+            else {
+                currentSensorAlias.value = sensor.alias;
+            }
+        }
+    } 
 }
 
 onMounted(() => {
@@ -212,7 +229,7 @@ onMounted(() => {
 
                         <div class="inspectSensorRow"> 
                             <h1 class="marginless sensorNameText"> {{t("profile.alias")}}: </h1>
-                            <PageInput :placeholder="sensors[sensorId]?.alias" v-model="currentSensorAlias" :changed="aliasChanged"></PageInput>
+                            <PageInput :placeholder="sensors[sensorId]?.alias" v-model="currentSensorAlias" @change="aliasChanged"></PageInput>
                         </div>
                     </BaseDiv>
 
@@ -349,7 +366,6 @@ onMounted(() => {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    gap: 20px;
 }
 
 .sensorNameText {
