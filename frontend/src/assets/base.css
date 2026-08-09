@@ -18,6 +18,9 @@
   --ok: #07db04;
   --danger:  #CC0000;
   --alert: #d4db04;
+
+  --error-bg: #FF4444;
+  --error-color:  black;
   
   --btn-danger-bg: #FF4444;
   --btn-danger-hover: #FF6666;
@@ -62,6 +65,9 @@
   --btn-secondary-border: #3BAF5F;
   --btn-secondary-text: #3BAF5F;
   --btn-secondary-hover: rgba(59, 175, 95, 0.15);
+  
+  --error-bg: transparent;
+  --error-color:  #CC0000;
   
   --btn-danger-bg: #FF5555;
   --btn-danger-hover: #FF7777;

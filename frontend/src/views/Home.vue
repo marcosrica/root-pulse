@@ -15,7 +15,6 @@
     const { t, setLocale, currentLocale } = useI18n();
 
     let showAddSensorLoading = ref<boolean>(false);
-    let reloadSensorsWhenPossible = ref<boolean>(false);
     let newSensorName = ref<string>("");
     let newSensorPassword = ref<string>("");
     

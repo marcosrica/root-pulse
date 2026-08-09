@@ -9,9 +9,30 @@ const changeUsername = async (req: Request, res: Response, next: NextFunction) =
   
   if (userId != -1) {
     //The user is authenticated, and hasn't bypassed the protection layers
-    const db: UsersDatabase = new UsersDatabase();
-    
-    return res.status(200).send("OK");
+    const username:string = req.body.username;
+
+    if (username != "") {
+      const db: UsersDatabase = new UsersDatabase();
+      console.log(username);
+      const exists = await db.findByUsername(username);
+
+      if (exists == null) {
+        //Username is not in use
+        //Trying to change the username
+        const result = await db.changeUsername(userId, username);
+
+        if (result) {
+          return res.status(200).send("OK");
+        }
+        else {
+          return res.status(500).send("Internal server error");
+        }
+      }
+      else {
+        //Username already exists
+        return res.status(403).json({ cause: "username" });
+      }
+    }
   }
   else {
     return res.status(401).json({ cause: "No token present" });

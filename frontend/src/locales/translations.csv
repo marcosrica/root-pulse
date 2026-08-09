@@ -31,6 +31,11 @@ profile.name,Name,Nombre
 profile.alias,Alias,Alias
 profile.addUser,Add user,Añadir usuario
 profile.addUsername,Username to add,Nombre del usuario a añadir
+profile.changeUsername,Change username,Cambiar el nombre de usuario
+profile.change,Change,Cambiar
+profile.error.usernameInUse,This username is already in use,Este nombre de usuario ya existe
+profile.error.usernameServer,An error has ocurred while updating the username. Please try again later.,"Ha ocurrido un error en el servidor al cambiar el nombre de usuario. Por favor, inténtelo de nuevo más tarde."
+
 
 conf.theme,Theme,Tema
 conf.language,Language,Idioma

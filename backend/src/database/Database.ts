@@ -195,6 +195,17 @@ export class UsersDatabase {
 
     return response.affectedRows > 0;
   }
+
+  //Changing a username
+  async changeUsername(userId: number, newUsername: string): Promise<boolean> {
+    const [response] = await pool.query<ResultSetHeader>(`
+      UPDATE users
+      SET username = ?
+      WHERE id = ?
+      `, [newUsername, userId]);
+  
+    return response.affectedRows > 0;
+  }
 }
 
 export class SensorsDatabase {
