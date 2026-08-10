@@ -7,10 +7,14 @@
     import PageInput from '@/components/PageInput.vue';
     import Chart from '@/components/Chart.vue';
     import PageButton from '@/components/PageButton.vue';
+    import apiClient from '@/Utilities/MakePetition';
+    import { useRoute } from 'vue-router';
     
     //Library for easy translation features
     const { t } = useI18n();
 
+    const sensorId = useRoute().query.id;
+    
     const startDate = ref<string>("");
     const endDate = ref<string>("");
 
@@ -64,12 +68,20 @@
         const clamped = Math.min(100, Math.max(0, Math.round(raw * 10) / 10));
         measures.push(clamped);
     }
+    //END OF STRESS TEST
+
+    const getData = async () => {
+      const response = await apiClient.post('/sensor/info', { id: sensorId });
+      console.log(response);
+    }
     
-    onMounted(() => {
+    onMounted(async () => {
         valueOk.value = data.lastMeasure > data.minAlert;
         lastConnection_formatted.value = formatTime();
 
-        console.log(lastConnection_formatted.value)
+        await getData();
+        
+        console.log(lastConnection_formatted.value);
     })
 </script>
 
@@ -202,6 +214,7 @@
 
     .alert {
         color: var(--alert);
+        cursor: pointer;
     }
 
     .lastConnectionLandscape {

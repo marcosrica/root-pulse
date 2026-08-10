@@ -1,0 +1,1 @@
+export { default as getSensorInfo } from './GetSensorInfo';

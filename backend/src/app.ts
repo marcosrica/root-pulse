@@ -5,6 +5,7 @@ import AuthRoutes from './routes/AuthRoutes';
 import { authentication, errorHandler } from './middleware';
 import cookieParser from 'cookie-parser';
 import UserRoutes from './routes/UserRoutes';
+import SensorRoutes from './routes/SensorRoutes';
 
 //Creating the app
 const app:Application = express();
@@ -34,6 +35,7 @@ app.use('/api', authentication)
 //private routes
 //------------------
 app.use('/api/user', UserRoutes);
+app.use('/api/sensor', SensorRoutes);
 
 //at the end to handle all the possible errors
 app.use(errorHandler);
