@@ -6,10 +6,10 @@ export async function seed(knex: Knex): Promise<void> {
 
     // Inserts seed entries
     await knex("sensors").insert([
-        { name:"Sensor1", password:"TestPassword", measure_interval:60, max_value: 1024,   watering_period: 36005, watering_time: 3601, min_alert:33 },
-        { name:"Sensor2", password:"TestPassword2", measure_interval:120, max_value: 2048, watering_period: 36005, watering_time: 30000, min_alert:50 },
-        { name:"Sensor3", password:"TestPassword3", measure_interval:60, max_value: 1024,  watering_period: 36005, watering_time: 3601, min_alert:10 },
-        { name:"Sensor4", password:"TestPassword4", measure_interval:60, max_value: 2048,  watering_period: 36005, watering_time: 3601, min_alert:25 },
-        { name:"Robot", password:"TestPassword5", measure_interval:30, max_value: 4096,    watering_period: 36005, watering_time: 3601, min_alert:90 },
+        { name:"Sensor1", password:"TestPassword", measure_interval:60, max_value: 1024,   watering_period: 36005, watering_time: 3601, min_alert: 1000 },
+        { name:"Sensor2", password:"TestPassword2", measure_interval:120, max_value: 2048, watering_period: 36005, watering_time: 30000, min_alert: 2038 },
+        { name:"Sensor3", password:"TestPassword3", measure_interval:60, max_value: 1024,  watering_period: 36005, watering_time: 3601, min_alert: 500 },
+        { name:"Sensor4", password:"TestPassword4", measure_interval:60, max_value: 2048,  watering_period: 36005, watering_time: 3601, min_alert: 25 },
+        { name:"Robot", password:"TestPassword5", measure_interval:30, max_value: 4096,    watering_period: 36005, watering_time: 3601, min_alert: 900 },
     ]);
 };

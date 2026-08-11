@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import { connectionInfo_ConnectionDB, SensorConnectionInfo, sensorInfo_ConnectionDB } from '../interfaces/SensorConnectionInfo';
 import { Pool } from 'mysql2/typings/mysql/lib/Pool';
 import { UserInfo } from '../interfaces/UserInfo';
+import { fullSensorInfo, fullSensorTableInfo } from '../interfaces/FullSensorInfo';
 dotenv.config();
 
 const user = process.env.DB_USER;
@@ -222,4 +223,50 @@ export class SensorsDatabase {
 
     return id;
   }
+
+  async getSensorId(sensorName: string): Promise<number> {
+    let id: number = -1;
+    const [result] = await pool.query<({ id: number } & RowDataPacket)[]>(
+      `SELECT id FROM sensors WHERE name = ?`, [sensorName]
+    );
+
+    if (result.length > 0) {
+      id = result[0].id;
+    }
+
+    return id;
+  }
+  
+  //Getting the full sensor info for display on the sensor page
+  async getFullSensorInfo(sensorId: number, userId: number): Promise<fullSensorInfo | undefined> {
+    //First getting the alias from the users table
+    const [aliasResponse] = await pool.query<connectionInfo_ConnectionDB[]>(`
+      SELECT alias FROM connections 
+      WHERE user_id = ? AND sensor_id = ?
+      `, [userId, sensorId]);
+
+    ///console.log(aliasResponse[0].alias);
+
+    const [sensorResponse] = await pool.query<fullSensorTableInfo[]>(`
+      SELECT name, max_value, min_alert, watering_period, watering_time, lastConnection FROM sensors
+      WHERE id = ?
+      `, [sensorId]);
+
+    if (aliasResponse.length > 0 && sensorResponse.length > 0) {
+      return {
+        id: sensorId,
+        name: sensorResponse[0].name,
+        alias: aliasResponse[0].alias,
+        lastConnection: sensorResponse[0].lastConnection,
+        last_measure: sensorResponse[0].max_value * 0.65,
+        max_value: sensorResponse[0].max_value,
+        min_alert: sensorResponse[0].min_alert,
+        watering_period: sensorResponse[0].watering_period,
+        watering_time: sensorResponse[0].watering_time,
+      }
+    }
+    else {
+      return undefined;
+    }
+  } 
 }

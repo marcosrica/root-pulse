@@ -9,6 +9,7 @@
     import PageButton from '@/components/PageButton.vue';
     import apiClient from '@/Utilities/MakePetition';
     import { useRoute } from 'vue-router';
+    import type { FullSensorInfo } from '@/Utilities/types/FullSensorInfo';
     
     //Library for easy translation features
     const { t } = useI18n();
@@ -21,16 +22,20 @@
     const valueOk = ref<boolean>(true);
     const lastConnection_formatted = ref<string>("");
     
-    let data: SensorInfo = {
+    let data = ref<FullSensorInfo>({
         name: "Sensor1",
         alias: "",
-        lastMeasure: 55,
-        minAlert: 30,
-        lastConnection: new Date('August 3, 2026 04:28:00')
-    };
+        last_measure: 55,
+        min_alert: 30,
+        lastConnection: new Date('August 3, 2026 04:28:00'),
+        id: 0,
+        watering_period: 100,
+        watering_time: 100,
+        max_value: 100
+    });
     
-    const formatTime = (): string => {
-        const diffMs = Date.now() - data.lastConnection.getTime()
+    const formatTime = (): string => {  
+        const diffMs = Date.now() - new Date(data.value.lastConnection).getTime();
         const seconds = Math.floor(Math.abs(diffMs) / 1000)
         const minutes = Math.floor(seconds / 60)
         const hours   = Math.floor(minutes / 60)
@@ -71,16 +76,17 @@
     //END OF STRESS TEST
 
     const getData = async () => {
-      const response = await apiClient.post('/sensor/info', { id: sensorId });
-      console.log(response);
+        const response = await apiClient.post('/sensor/info', { id: sensorId });      
+        data.value = response.data as FullSensorInfo;
+        console.log(data.value);
+        lastConnection_formatted.value = formatTime();
     }
     
     onMounted(async () => {
-        valueOk.value = data.lastMeasure > data.minAlert;
-        lastConnection_formatted.value = formatTime();
-
         await getData();
         
+        valueOk.value = data.value.last_measure > data.value.min_alert;
+        lastConnection_formatted.value = formatTime();
         console.log(lastConnection_formatted.value);
     })
 </script>
@@ -96,7 +102,7 @@
         <BaseDiv class="partDiv headerDiv">
             <div class="rowContainer">
                 <div class="leftDiv">
-                    <h1 :class="['marginless', 'lastMeasureCuantity', valueOk ? 'Ok' : 'notOk']"> {{data.lastMeasure}}% </h1>
+                    <h1 :class="['marginless', 'lastMeasureCuantity', valueOk ? 'Ok' : 'notOk']"> {{Math.floor((data.last_measure / data.max_value) * 100)}}% </h1>
                     <p class="marginless"> {{t("sensor.lastMeasure")}} </p>
                 </div>
     
@@ -106,7 +112,7 @@
                 </div>
     
                 <div class="leftDiv">
-                    <h1 :class="['marginless', 'lastMeasureCuantity', 'alert']"> {{data.minAlert}}% </h1>
+                    <h1 :class="['marginless', 'lastMeasureCuantity', 'alert']"> {{Math.floor((data.min_alert / data.max_value) * 100)}}% </h1>
                     <p class="marginless"> {{t("sensor.alert")}} </p>
                 </div>
             </div>
