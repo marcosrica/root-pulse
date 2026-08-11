@@ -83,7 +83,7 @@ export class UsersDatabase {
       INSERT INTO connections (user_id, sensor_id, alias, password, folder, edit_permission)
       VALUES (?, ?, "", "", "", ?)
       `, [userId, sensorId, admin]);
-
+    
     return result.affectedRows > 0;
   }
 
@@ -95,7 +95,7 @@ export class UsersDatabase {
       `, [userId]);
 
     let result: SensorConnectionInfo[] = [];
-    console.log("COnnections: ", connections);
+    console.log("Connections: ", connections);
 
     //Cycling through all the connected sensors
     for (let i = 0; i < connections.length; i++) {
@@ -104,7 +104,7 @@ export class UsersDatabase {
 
       //Getting the data needed that lives in the sensors table
       const [sensor] = await pool.query<sensorInfo_ConnectionDB[]>(`
-        SELECT name, max_value, min_alert, last_connection 
+        SELECT name, max_value, min_alert, lastConnection 
         FROM sensors WHERE id = ?
         `, [ID]);
       
