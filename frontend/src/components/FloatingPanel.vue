@@ -28,6 +28,7 @@ const props = defineProps <{
 }
 
 .active {
+    backdrop-filter: blur(3px);
     background-color: #000000b5;
     pointer-events: all;
 }
