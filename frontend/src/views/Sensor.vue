@@ -21,6 +21,8 @@
 
     const valueOk = ref<boolean>(true);
     const lastConnection_formatted = ref<string>("");
+    const wateringTime_formatted = ref<string>(""); 
+    const wateringPeriod_formatted = ref<string>("");
     
     let data = ref<FullSensorInfo>({
         name: "Sensor1",
@@ -47,6 +49,50 @@
         if (days < 30)    return t('connection.daysAgo',    { n: days })
         if (days < 365)   return t('connection.monthsAgo',  { n: Math.floor(days / 30) })
         return t('connection.yearsAgo', { n: Math.floor(days / 365) })
+    }
+
+    const formatBottomTime = (time: number): string => {
+        const hours = Math.floor(time / 3600);
+        const minutes = Math.floor(time / 60) % 60;
+        const seconds = time % 60;
+
+        let index = "connection.";
+
+        //First filter: hours
+        if (hours != 0) {
+            //Second filter: minutes
+            if (minutes != 0) {
+                if (seconds != 0) {
+                    index += "hoursMinutesSeconds";
+                }
+                else {
+                    index += "hoursAndMinutes";
+                }
+            }
+            else {
+                if (seconds != 0) {
+                    index += "hoursAndSeconds";
+                }
+                else {
+                    index += "justHours";
+                }
+            }
+        }
+        else {
+            if (minutes != 0) {
+                if (seconds != 0) {
+                    index += "minutesAndSeconds";
+                }
+                else {
+                    index += "justMinutes";
+                }
+            }
+            else {
+                index += "justSeconds";
+            }
+        }
+
+        return t(index, {h:hours, m:minutes, s:seconds});
     }
 
     //STRESS TEST
@@ -87,7 +133,9 @@
         
         valueOk.value = data.value.last_measure > data.value.min_alert;
         lastConnection_formatted.value = formatTime();
-        console.log(lastConnection_formatted.value);
+        
+        wateringTime_formatted.value = formatBottomTime(data.value.watering_time);
+        wateringPeriod_formatted.value = formatBottomTime(data.value.watering_period);
     })
 </script>
 
@@ -141,13 +189,13 @@
 
             <BaseDiv class="schemesDiv firstScheme">
                 <div class="sensorDivArrow clock" />
-                <p class="marginless timeText"> 12 horas y 55 minutos </p>
+                <p class="marginless timeText"> {{wateringPeriod_formatted}} </p>
                 <div class="sensorDivArrow arrow" />
             </BaseDiv>
 
             <BaseDiv class="schemesDiv lastScheme">
                 <div class="sensorDivArrow wateringCan"/>
-                <p class="marginless timeText"> 12 horas y 55 minutos </p>
+                <p class="marginless timeText"> {{wateringTime_formatted}} </p>
                 <div class="sensorDivArrow arrow" />
             </BaseDiv>
         </BaseDiv>
