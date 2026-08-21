@@ -50,3 +50,10 @@ connection.daysAgo,{n} days ago,Hace {n} días
 connection.monthsAgo,{n} months ago,Hace {n} meses
 connection.yearsAgo,{n} years ago,Hace {n} años
 connection.lastConnection,Last connection,Última conexión
+connection.justSeconds,{s} seconds,{s} segundos
+connection.justMinutes,{m} minutes,{m} minutos
+connection.justHours,{h} hours,{h} horas
+connection.minutesAndSeconds,{m} minutes and {s} seconds,{m} minutos y {s} segundos
+connection.hoursAndSeconds,{h} hours and {s} seconds,{h} horas y {s} segundos
+connection.hoursAndMinutes,{h} hours and {m} minutes,{h} horas y {m} minutos
+connection.hoursMinutesSeconds,"{h} hours, {m} minutes and {s} s","{h} horas, {m} minutos y {s}s
