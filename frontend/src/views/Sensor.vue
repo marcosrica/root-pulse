@@ -14,16 +14,21 @@
     //Library for easy translation features
     const { t } = useI18n();
 
+    //ID of the sensor being inspected
     const sensorId = useRoute().query.id;
-    
+
+    //Start and end date of the data being fetched for the graph
     const startDate = ref<string>("");
     const endDate = ref<string>("");
 
+    //Checking if the last measure of the sensor is below the minimun safe value
     const valueOk = ref<boolean>(true);
+    //Formatted texts with times in natural language
     const lastConnection_formatted = ref<string>("");
     const wateringTime_formatted = ref<string>(""); 
     const wateringPeriod_formatted = ref<string>("");
-    
+
+    //Full data of the sensor being inspected
     let data = ref<FullSensorInfo>({
         name: "Sensor1",
         alias: "",
@@ -35,7 +40,8 @@
         watering_time: 100,
         max_value: 100
     });
-    
+
+    //Function that formats a time from Date class into natural language
     const formatTime = (): string => {  
         const diffMs = Date.now() - new Date(data.value.lastConnection).getTime();
         const seconds = Math.floor(Math.abs(diffMs) / 1000)
@@ -51,6 +57,7 @@
         return t('connection.yearsAgo', { n: Math.floor(days / 365) })
     }
 
+    //Function that formats a time in seconds into hours, mintues and seconds
     const formatBottomTime = (time: number): string => {
         const hours = Math.floor(time / 3600);
         const minutes = Math.floor(time / 60) % 60;
