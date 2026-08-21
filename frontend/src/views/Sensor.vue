@@ -10,6 +10,8 @@
     import apiClient from '@/Utilities/MakePetition';
     import { useRoute } from 'vue-router';
     import type { FullSensorInfo } from '@/Utilities/types/FullSensorInfo';
+    import FloatingPanel from '@/components/FloatingPanel.vue';
+    import TimeInput from '@/components/TimeInput.vue';
     
     //Library for easy translation features
     const { t } = useI18n();
@@ -17,17 +19,7 @@
     //ID of the sensor being inspected
     const sensorId = useRoute().query.id;
 
-    //Start and end date of the data being fetched for the graph
-    const startDate = ref<string>("");
-    const endDate = ref<string>("");
-
-    //Checking if the last measure of the sensor is below the minimun safe value
-    const valueOk = ref<boolean>(true);
-    //Formatted texts with times in natural language
-    const lastConnection_formatted = ref<string>("");
-    const wateringTime_formatted = ref<string>(""); 
-    const wateringPeriod_formatted = ref<string>("");
-
+    
     //Full data of the sensor being inspected
     let data = ref<FullSensorInfo>({
         name: "Sensor1",
@@ -41,6 +33,25 @@
         max_value: 100
     });
 
+    //Start and end date of the data being fetched for the graph
+    const startDate = ref<string>("");
+    const endDate = ref<string>("");
+
+    //Checking if the last measure of the sensor is below the minimun safe value
+    const valueOk = ref<boolean>(true);
+    //Formatted texts with times in natural language
+    const lastConnection_formatted = ref<string>("");
+    const wateringTime_formatted = ref<string>(""); 
+    const wateringPeriod_formatted = ref<string>("");
+
+    //Variables for changing the watering time
+    const showChangeWateringTimePanel = ref<boolean>(false);
+    const selectedWateringTime = ref<string>("");
+    
+    //Variables for changing the watering period
+    const showChangeWateringPeriodPanel = ref<boolean>(false);
+    const selectedWateringPeriod = ref<string>("");
+    
     //Function that formats a time from Date class into natural language
     const formatTime = (): string => {  
         const diffMs = Date.now() - new Date(data.value.lastConnection).getTime();
@@ -102,6 +113,14 @@
         return t(index, {h:hours, m:minutes, s:seconds});
     }
 
+    const saveWateringTime = async () => {
+      
+    }
+
+    const saveWateringPeriod = async () => {
+      
+    }
+    
     //STRESS TEST
     // Generate stress‑test data: 360 points, one every 2 minutes over 12 hours
     const start = new Date('2026-08-03T08:00:00');
@@ -148,6 +167,44 @@
 
 <template>
     <BasePage location="sensor">
+        <!-- Floating panel for establishing the watering time -->
+        <FloatingPanel :show="showChangeWateringTimePanel" :hide="() => { showChangeWateringTimePanel = false; }">
+            <div class="floatingPanelContainer">
+                <!-- Floating panel's header -->
+                <div class="floatingPanelHeader">
+                    <h1 class="floatingPanelTitle"> {{t("wateringPanel.wateringTime")}} </h1>
+
+                    <PageButton style="margin-top: 3px;" :iconOnly="true" icon="/icons/Cross.svg" v-on:click="() => { showChangeWateringTimePanel = false; }"></PageButton>
+                </div>
+
+                <div class="floatingPanelContentWrapper">
+                    <p class="marginless timeText" style="margin-bottom: 10px; text-align: justify;"> {{t("wateringPanel.currentWateringConfig")}} {{wateringPeriod_formatted}} </p>
+                    <TimeInput v-model="selectedWateringTime"/>
+
+                    <PageButton style="margin-top: 20px;" v-on:click="saveWateringTime">{{t("all.save")}}</PageButton>
+                </div>
+            </div>
+        </FloatingPanel>
+
+        <!-- Floating panel for establishing the watering preiod -->
+        <FloatingPanel :show="showChangeWateringPeriodPanel" :hide="() => { showChangeWateringPeriodPanel = false; }">
+            <div class="floatingPanelContainer">
+                <!-- Floating panel's header -->
+                <div class="floatingPanelHeader">
+                    <h1 class="floatingPanelTitle"> {{t("wateringPanel.wateringPeriod")}} </h1>
+
+                    <PageButton style="margin-top: 3px;" :iconOnly="true" icon="/icons/Cross.svg" v-on:click="() => { showChangeWateringPeriodPanel = false; }"></PageButton>
+                </div>
+
+                <div class="floatingPanelContentWrapper">
+                    <p class="marginless timeText" style="margin-bottom: 10px; text-align: justify;"> {{t("wateringPanel.currentWateringPeriod")}} {{wateringPeriod_formatted}} </p>
+                    <TimeInput v-model="selectedWateringPeriod"/>
+
+                    <PageButton style="margin-top: 20px;" v-on:click="saveWateringTime">{{t("all.save")}}</PageButton>
+                </div>
+            </div>
+        </FloatingPanel>
+        
     	<!-- Name of the sensor -->
         <BaseDiv class="headerDiv">
             <h1 class="marginless headerText"> {{data.alias != "" ? data.alias : data.name}} </h1>
@@ -194,13 +251,13 @@
         <BaseDiv class="headerDiv">
             <h1 class="marginless headerText"> {{t("sensor.wateringSchemes")}} </h1>
 
-            <BaseDiv class="schemesDiv firstScheme">
+            <BaseDiv class="schemesDiv firstScheme" v-on:click="showChangeWateringPeriodPanel = true">
                 <div class="sensorDivArrow clock" />
                 <p class="marginless timeText"> {{wateringPeriod_formatted}} </p>
                 <div class="sensorDivArrow arrow" />
             </BaseDiv>
 
-            <BaseDiv class="schemesDiv lastScheme">
+            <BaseDiv class="schemesDiv lastScheme" v-on:click="showChangeWateringTimePanel = true">
                 <div class="sensorDivArrow wateringCan"/>
                 <p class="marginless timeText"> {{wateringTime_formatted}} </p>
                 <div class="sensorDivArrow arrow" />
@@ -360,5 +417,56 @@
                 font-size: 4dvw;
             }
         }
+    }
+
+    .floatingPanelContainer {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        
+        @media(orientation: portrait) {
+            width: 95dvw;
+        }
+        @media(orientation: landscape) {
+            min-width: 40dvw;
+        }
+    }
+
+    .floatingPanelHeader {
+        box-sizing: border-box;
+        padding-left: 10px;
+        padding-right: 10px;
+        margin-top: 7px;
+        
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        
+        align-items: flex-start;
+        
+        gap: 20px;
+    }
+
+    .floatingPanelTitle {
+        margin: 5px;
+        font-size: 30px;
+    }
+
+    .floatingPanelContentWrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+        max-height: 80dvh;
+        
+        overflow-y: auto;
+        scrollbar-width: none;
+        ::-webkit-scrollbar {display: none;}
     }
 </style>
