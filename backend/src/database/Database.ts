@@ -292,8 +292,6 @@ export class SensorsDatabase {
 
   //Changing the time the sensor will be delivering water to the plant 
   async changeWateringTime(sensorId: number, newTime: number): Promise<boolean> {
-    console.log("Changing the info for the sensor with ID: " + sensorId + " to the new time: " + newTime);
-    
     const [response] = await pool.query<ResultSetHeader>(`
       UPDATE sensors
       SET watering_time = ?
