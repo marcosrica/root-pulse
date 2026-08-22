@@ -4,6 +4,7 @@ export type FullSensorInfo = {
   alias: string,
   last_measure: number,
   min_alert: number,
+  max_alert: number,
   watering_period: number,
   watering_time: number,
   lastConnection: Date,

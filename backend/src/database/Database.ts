@@ -257,7 +257,7 @@ export class SensorsDatabase {
     ///console.log(aliasResponse[0].alias);
 
     const [sensorResponse] = await pool.query<fullSensorTableInfo[]>(`
-      SELECT name, max_value, min_alert, watering_period, watering_time, lastConnection FROM sensors
+      SELECT name, max_value, min_alert, max_alert, watering_period, watering_time, lastConnection FROM sensors
       WHERE id = ?
       `, [sensorId]);
 
@@ -270,6 +270,7 @@ export class SensorsDatabase {
         last_measure: sensorResponse[0].max_value * 0.65,
         max_value: sensorResponse[0].max_value,
         min_alert: sensorResponse[0].min_alert,
+        max_alert: sensorResponse[0].max_alert,
         watering_period: sensorResponse[0].watering_period,
         watering_time: sensorResponse[0].watering_time,
       }

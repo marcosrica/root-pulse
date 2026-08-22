@@ -8,6 +8,7 @@ export interface fullSensorInfo {
   last_measure: number,
   max_value: number,
   min_alert: number,
+  max_alert: number,
   watering_period: number,
   watering_time: number,
 }
@@ -18,6 +19,7 @@ export interface fullSensorTableInfo extends RowDataPacket {
   last_measure: number,
   max_value: number,
   min_alert: number,
+  max_alert: number,
   watering_period: number,
   watering_time: number,
 }
