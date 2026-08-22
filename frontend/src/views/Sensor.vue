@@ -114,11 +114,30 @@
     }
 
     const saveWateringTime = async () => {
-      
+        console.log("New watering time: " + selectedWateringTime.value);
+
+        const [h, m] = selectedWateringTime.value.split(":");
+        const newHours: number = h != undefined ? +h : -1;
+        const newMinuts: number = m != undefined ? +m : -1;
+
+        const newTime = (newHours * 3600) + (newMinuts * 60); 
+
+        const response = await apiClient.post('/sensor/wateringTime', { newTime: newTime, id: sensorId });
+
+        if (response.ok) {
+            showChangeWateringTimePanel.value = false;
+            await getData();
+        }
     }
 
     const saveWateringPeriod = async () => {
+        console.log("New watering time: " + selectedWateringPeriod.value);
       
+        const [h, m] = selectedWateringPeriod.value.split(":");
+        const newHours: number = h != undefined ? +h : -1;
+        const newMinuts: number = m != undefined ? +m : -1;
+
+        const newTime = (newHours * 3600) + (newMinuts * 60); 
     }
     
     //STRESS TEST
@@ -152,16 +171,15 @@
         data.value = response.data as FullSensorInfo;
         console.log(data.value);
         lastConnection_formatted.value = formatTime();
+        
+        wateringTime_formatted.value = formatBottomTime(data.value.watering_time);
+        wateringPeriod_formatted.value = formatBottomTime(data.value.watering_period);
     }
     
     onMounted(async () => {
         await getData();
         
         valueOk.value = data.value.last_measure > data.value.min_alert;
-        lastConnection_formatted.value = formatTime();
-        
-        wateringTime_formatted.value = formatBottomTime(data.value.watering_time);
-        wateringPeriod_formatted.value = formatBottomTime(data.value.watering_period);
     })
 </script>
 
@@ -200,7 +218,7 @@
                     <p class="marginless timeText" style="margin-bottom: 10px; text-align: justify;"> {{t("wateringPanel.currentWateringPeriod")}} {{wateringPeriod_formatted}} </p>
                     <TimeInput v-model="selectedWateringPeriod"/>
 
-                    <PageButton style="margin-top: 20px;" v-on:click="saveWateringTime">{{t("all.save")}}</PageButton>
+                    <PageButton style="margin-top: 20px;" v-on:click="saveWateringPeriod">{{t("all.save")}}</PageButton>
                 </div>
             </div>
         </FloatingPanel>

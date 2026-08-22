@@ -26,7 +26,6 @@ function handleHoursInput() {
     if (val.length > 2) val = val.slice(0, 2);
     if (val !== '') {
         const num = parseInt(val, 10);
-        if (num > 23) val = '23';
     }
     hours.value = val;
   

@@ -224,6 +224,7 @@ export class SensorsDatabase {
     return id;
   }
 
+  //Getting the id of a sensor given its name
   async getSensorId(sensorName: string): Promise<number> {
     let id: number = -1;
     const [result] = await pool.query<({ id: number } & RowDataPacket)[]>(
@@ -235,6 +236,14 @@ export class SensorsDatabase {
     }
 
     return id;
+  }
+
+  async isAdminConnection(sensorId:number, userId:number):Promise<boolean> {
+    const [response] = await pool.query<any[]>(`
+      SELECT edit_permission FROM connections WHERE sensor_id = ? AND user_id = ?
+      `, [sensorId, userId]);
+
+    return response[0].edit_permission;
   }
   
   //Getting the full sensor info for display on the sensor page
@@ -269,4 +278,29 @@ export class SensorsDatabase {
       return undefined;
     }
   } 
+
+  //Changing the time the sensor waits between every watering
+  async changeWateringPeriod(sensorId: number, newTime: number): Promise<boolean> {
+    const [response] = await pool.query<ResultSetHeader>(`
+      UPDATE sensors
+      SET watering_period = ?
+      WHERE id = ?
+      `, [newTime, sensorId]);
+
+    return response.affectedRows > 0;
+  }
+
+  //Changing the time the sensor will be delivering water to the plant 
+  async changeWateringTime(sensorId: number, newTime: number): Promise<boolean> {
+    console.log("Changing the info for the sensor with ID: " + sensorId + " to the new time: " + newTime);
+    
+    const [response] = await pool.query<ResultSetHeader>(`
+      UPDATE sensors
+      SET watering_time = ?
+      WHERE id = ?
+      `, [newTime, sensorId]);
+
+    console.log(response);
+    return response.affectedRows > 0;
+  }
 }
