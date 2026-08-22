@@ -138,6 +138,13 @@
         const newMinuts: number = m != undefined ? +m : -1;
 
         const newTime = (newHours * 3600) + (newMinuts * 60); 
+        
+        const response = await apiClient.post('/sensor/wateringPeriod', { newTime: newTime, id: sensorId });
+
+        if (response.ok) {
+            showChangeWateringPeriodPanel.value = false;
+            await getData();
+        }
     }
     
     //STRESS TEST
@@ -174,12 +181,12 @@
         
         wateringTime_formatted.value = formatBottomTime(data.value.watering_time);
         wateringPeriod_formatted.value = formatBottomTime(data.value.watering_period);
+        
+        valueOk.value = data.value.last_measure > data.value.min_alert;
     }
     
     onMounted(async () => {
-        await getData();
-        
-        valueOk.value = data.value.last_measure > data.value.min_alert;
+        await getData();        
     })
 </script>
 
