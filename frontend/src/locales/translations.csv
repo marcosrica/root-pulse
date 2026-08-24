@@ -60,6 +60,8 @@ connection.hoursAndSeconds,{h} hours and {s} seconds,{h} horas y {s} segundos
 connection.hoursAndMinutes,{h} hours and {m} minutes,{h} horas y {m} minutos
 connection.hoursMinutesSeconds,"{h} hours, {m} minutes and {s} s","{h} horas, {m} minutos y {s}s
 
+thresholdPanel.title,Alert thresholds,Márgenes de alerta
+
 wateringPanel.wateringPeriod,Watering period,Periodo de riego
 wateringPanel.wateringTime,Watering time,Tiempo de riego
 wateringPanel.currentWateringConfig,Your current configuration is to water the plant for ,"Según tu configuración actual, la planta se regará durante" 

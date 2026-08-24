@@ -280,6 +280,19 @@ export class SensorsDatabase {
     }
   } 
 
+  async getMaxValue(sensorId: number) {
+    let maxValue: number = -1;
+    const [result] = await pool.query<({ id: number } & RowDataPacket)[]>(
+      `SELECT max_value FROM sensors WHERE id = ?`, [sensorId]
+    );
+
+    if (result.length > 0) {
+      maxValue = result[0].max_value;
+    }
+
+    return maxValue;
+  }
+  
   //Changing the time the sensor waits between every watering
   async changeWateringPeriod(sensorId: number, newTime: number): Promise<boolean> {
     const [response] = await pool.query<ResultSetHeader>(`
@@ -301,5 +314,22 @@ export class SensorsDatabase {
 
     console.log(response);
     return response.affectedRows > 0;
+  }
+
+  //Changing the sensor's alert and auto-watering thresholds
+  async changeThresholds(sensorId: number, minThreshold: number, maxThreshold: number) {
+    const [response1] = await pool.query<ResultSetHeader>(`
+      UPDATE sensors
+      SET min_alert = ?
+      WHERE id = ?
+      `, [minThreshold, sensorId]);
+
+    const [response2] = await pool.query<ResultSetHeader>(`
+      UPDATE sensors
+      SET max_alert = ?
+      WHERE id = ?
+      `, [maxThreshold, sensorId]);
+
+    return (response1.affectedRows > 0) && (response2.affectedRows > 0);
   }
 }

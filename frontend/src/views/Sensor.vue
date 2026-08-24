@@ -12,13 +12,14 @@
     import type { FullSensorInfo } from '@/Utilities/types/FullSensorInfo';
     import FloatingPanel from '@/components/FloatingPanel.vue';
     import TimeInput from '@/components/TimeInput.vue';
+    import BaseRangeSlide from '@/components/BaseRangeSlide.vue';
     
     //Library for easy translation features
     const { t } = useI18n();
 
     //ID of the sensor being inspected
     const sensorId = useRoute().query.id;
-
+    const minAlertValue = ref<number>();
     
     //Full data of the sensor being inspected
     let data = ref<FullSensorInfo>({
@@ -51,6 +52,10 @@
     //Variables for changing the watering period
     const showChangeWateringPeriodPanel = ref<boolean>(false);
     const selectedWateringPeriod = ref<string>("");
+
+    //Variables for changing the alert threshold
+    const showMinThresholdPanel = ref<boolean>(true);
+    const minThresholdValues = ref<number[]>([]);
     
     //Function that formats a time from Date class into natural language
     const formatTime = (): string => {  
@@ -146,6 +151,15 @@
             await getData();
         }
     }
+
+    const saveNewThresholds = async () => {
+        const response = await apiClient.post('/sensor/thresholds', { newMin: minThresholdValues.value[0], newMax: minThresholdValues.value[1], id: sensorId });
+
+        if (response.ok) { 
+            showMinThresholdPanel.value = false;
+            await getData();
+        }
+    }
     
     //STRESS TEST
     // Generate stress‑test data: 360 points, one every 2 minutes over 12 hours
@@ -176,13 +190,20 @@
     const getData = async () => {
         const response = await apiClient.post('/sensor/info', { id: sensorId });      
         data.value = response.data as FullSensorInfo;
-        console.log(data.value);
+        console.log("The data received is ", data.value);
         lastConnection_formatted.value = formatTime();
         
         wateringTime_formatted.value = formatBottomTime(data.value.watering_time);
         wateringPeriod_formatted.value = formatBottomTime(data.value.watering_period);
         
         valueOk.value = data.value.last_measure > data.value.min_alert;
+
+        const minRealValue = data.value.min_alert == 0 ? 0 : (Math.floor((data.value.min_alert / data.value.max_value) * 100) + 1);
+        const maxRealValue = data.value.max_alert == data.value.max_value ? 100 : (Math.floor((data.value.max_alert / data.value.max_value) * 100) + 1);
+
+        minAlertValue.value = minRealValue;
+        
+        minThresholdValues.value = [minRealValue, maxRealValue];
     }
     
     onMounted(async () => {
@@ -229,6 +250,24 @@
                 </div>
             </div>
         </FloatingPanel>
+
+        <!-- Floating panel for establishing the danger thresholds -->
+        <FloatingPanel :show="showMinThresholdPanel" :hide="() => { showMinThresholdPanel = false; }">
+            <div class="floatingPanelContainer">
+                <!-- Floating panel's header -->
+                <div class="floatingPanelHeader" style="margin-bottom: 20px;">
+                    <h1 class="floatingPanelTitle"> {{t("thresholdPanel.title")}} </h1>
+
+                    <PageButton style="margin-top: 3px;" :iconOnly="true" icon="/icons/Cross.svg" v-on:click="() => { showMinThresholdPanel = false; }"></PageButton>
+                </div>
+
+                <div class="floatingPanelContentWrapper">
+                    <BaseRangeSlide v-model="minThresholdValues" />
+
+                    <PageButton style="margin-top: 20px;" v-on:click="saveNewThresholds">{{t("all.save")}}</PageButton>
+                </div>
+            </div>
+        </FloatingPanel>
         
     	<!-- Name of the sensor -->
         <BaseDiv class="headerDiv">
@@ -248,8 +287,8 @@
                     <p class="marginless"> {{t("connection.lastConnection")}} </p>
                 </div>
     
-                <div class="leftDiv">
-                    <h1 :class="['marginless', 'lastMeasureCuantity', 'alert']"> {{Math.floor((data.min_alert / data.max_value) * 100)}}% </h1>
+                <div class="leftDiv" v-on:click="showMinThresholdPanel = true">
+                    <h1 :class="['marginless', 'lastMeasureCuantity', 'alert']"> {{minAlertValue}}% </h1>
                     <p class="marginless"> {{t("sensor.alert")}} </p>
                 </div>
             </div>
