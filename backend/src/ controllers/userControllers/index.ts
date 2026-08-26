@@ -6,3 +6,4 @@ export { default as getUserInfo } from './GetInfo';
 export { default as setTheme } from './SetTheme';
 export { default as setLanguage } from './ChangeLanguage';
 export { default as ChangeUsername } from './ChangeUsername';
+export { default as isLoggedIn } from './IsUserLoggedIn'
