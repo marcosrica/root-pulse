@@ -54,7 +54,7 @@
     const selectedWateringPeriod = ref<string>("");
 
     //Variables for changing the alert threshold
-    const showMinThresholdPanel = ref<boolean>(true);
+    const showMinThresholdPanel = ref<boolean>(false);
     const minThresholdValues = ref<number[]>([]);
     
     //Function that formats a time from Date class into natural language
