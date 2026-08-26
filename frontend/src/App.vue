@@ -7,7 +7,6 @@ onMounted(async () => {
     if (!location.href.includes("/auth")) {
         try {
             const response = await apiClient.get("/user/logged");
-            location.href = "/home";
         }
         catch (e) {
             location.href = "/auth/login";
