@@ -1,5 +1,7 @@
 key,en,es
 
+all.save,Save,Guardar
+
 auth.login,Log in,Iniciar sesión
 auth.username,Username,Nombre de usuario
 auth.password,Password,Contraseña
@@ -15,6 +17,7 @@ home.checkAll,Check all,Comprobar todas las plantas
 home.addPlant,Add a new plant,Añadir una planta nueva
 home.sensorName,Sensor name,Nombre del sensor
 home.sensorPassword,Sensor password,Contraseña del sensor
+home.add,Submit,Añadir
 
 sensor.lastMeasure,Last measure,Ultima medición
 sensor.alert,Alert value,Mínimo seguro
@@ -30,6 +33,11 @@ profile.name,Name,Nombre
 profile.alias,Alias,Alias
 profile.addUser,Add user,Añadir usuario
 profile.addUsername,Username to add,Nombre del usuario a añadir
+profile.changeUsername,Change username,Cambiar el nombre de usuario
+profile.change,Change,Cambiar
+profile.error.usernameInUse,This username is already in use,Este nombre de usuario ya existe
+profile.error.usernameServer,An error has ocurred while updating the username. Please try again later.,"Ha ocurrido un error en el servidor al cambiar el nombre de usuario. Por favor, inténtelo de nuevo más tarde."
+
 
 conf.theme,Theme,Tema
 conf.language,Language,Idioma
@@ -44,3 +52,17 @@ connection.daysAgo,{n} days ago,Hace {n} días
 connection.monthsAgo,{n} months ago,Hace {n} meses
 connection.yearsAgo,{n} years ago,Hace {n} años
 connection.lastConnection,Last connection,Última conexión
+connection.justSeconds,{s} seconds,{s} segundos
+connection.justMinutes,{m} minutes,{m} minutos
+connection.justHours,{h} hours,{h} horas
+connection.minutesAndSeconds,{m} minutes and {s} seconds,{m} minutos y {s} segundos
+connection.hoursAndSeconds,{h} hours and {s} seconds,{h} horas y {s} segundos
+connection.hoursAndMinutes,{h} hours and {m} minutes,{h} horas y {m} minutos
+connection.hoursMinutesSeconds,"{h} hours, {m} minutes and {s} s","{h} horas, {m} minutos y {s}s
+
+thresholdPanel.title,Alert thresholds,Márgenes de alerta
+
+wateringPanel.wateringPeriod,Watering period,Periodo de riego
+wateringPanel.wateringTime,Watering time,Tiempo de riego
+wateringPanel.currentWateringConfig,Your current configuration is to water the plant for ,"Según tu configuración actual, la planta se regará durante" 
+wateringPanel.currentWateringPeriod,Your current configuration is to water the plant once every , "Según tu configuración actual, la planta se regará una vez cada " 

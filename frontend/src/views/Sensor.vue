@@ -7,26 +7,59 @@
     import PageInput from '@/components/PageInput.vue';
     import Chart from '@/components/Chart.vue';
     import PageButton from '@/components/PageButton.vue';
+    import apiClient from '@/Utilities/MakePetition';
+    import { useRoute } from 'vue-router';
+    import type { FullSensorInfo } from '@/Utilities/types/FullSensorInfo';
+    import FloatingPanel from '@/components/FloatingPanel.vue';
+    import TimeInput from '@/components/TimeInput.vue';
+    import BaseRangeSlide from '@/components/BaseRangeSlide.vue';
     
     //Library for easy translation features
     const { t } = useI18n();
 
+    //ID of the sensor being inspected
+    const sensorId = useRoute().query.id;
+    const minAlertValue = ref<number>();
+    
+    //Full data of the sensor being inspected
+    let data = ref<FullSensorInfo>({
+        name: "Sensor1",
+        alias: "",
+        last_measure: 55,
+        min_alert: 30,
+        lastConnection: new Date('August 3, 2026 04:28:00'),
+        id: 0,
+        watering_period: 100,
+        watering_time: 100,
+        max_value: 100
+    });
+
+    //Start and end date of the data being fetched for the graph
     const startDate = ref<string>("");
     const endDate = ref<string>("");
 
+    //Checking if the last measure of the sensor is below the minimun safe value
     const valueOk = ref<boolean>(true);
+    //Formatted texts with times in natural language
     const lastConnection_formatted = ref<string>("");
+    const wateringTime_formatted = ref<string>(""); 
+    const wateringPeriod_formatted = ref<string>("");
+
+    //Variables for changing the watering time
+    const showChangeWateringTimePanel = ref<boolean>(false);
+    const selectedWateringTime = ref<string>("");
     
-    let data: SensorInfo = {
-        name: "Sensor1",
-        alias: "",
-        lastMeasure: 55,
-        minAlert: 30,
-        lastConnection: new Date('August 3, 2026 04:28:00')
-    };
+    //Variables for changing the watering period
+    const showChangeWateringPeriodPanel = ref<boolean>(false);
+    const selectedWateringPeriod = ref<string>("");
+
+    //Variables for changing the alert threshold
+    const showMinThresholdPanel = ref<boolean>(false);
+    const minThresholdValues = ref<number[]>([]);
     
-    const formatTime = (): string => {
-        const diffMs = Date.now() - data.lastConnection.getTime()
+    //Function that formats a time from Date class into natural language
+    const formatTime = (): string => {  
+        const diffMs = Date.now() - new Date(data.value.lastConnection).getTime();
         const seconds = Math.floor(Math.abs(diffMs) / 1000)
         const minutes = Math.floor(seconds / 60)
         const hours   = Math.floor(minutes / 60)
@@ -40,6 +73,94 @@
         return t('connection.yearsAgo', { n: Math.floor(days / 365) })
     }
 
+    //Function that formats a time in seconds into hours, mintues and seconds
+    const formatBottomTime = (time: number): string => {
+        const hours = Math.floor(time / 3600);
+        const minutes = Math.floor(time / 60) % 60;
+        const seconds = time % 60;
+
+        let index = "connection.";
+
+        //First filter: hours
+        if (hours != 0) {
+            //Second filter: minutes
+            if (minutes != 0) {
+                if (seconds != 0) {
+                    index += "hoursMinutesSeconds";
+                }
+                else {
+                    index += "hoursAndMinutes";
+                }
+            }
+            else {
+                if (seconds != 0) {
+                    index += "hoursAndSeconds";
+                }
+                else {
+                    index += "justHours";
+                }
+            }
+        }
+        else {
+            if (minutes != 0) {
+                if (seconds != 0) {
+                    index += "minutesAndSeconds";
+                }
+                else {
+                    index += "justMinutes";
+                }
+            }
+            else {
+                index += "justSeconds";
+            }
+        }
+
+        return t(index, {h:hours, m:minutes, s:seconds});
+    }
+
+    const saveWateringTime = async () => {
+        console.log("New watering time: " + selectedWateringTime.value);
+
+        const [h, m] = selectedWateringTime.value.split(":");
+        const newHours: number = h != undefined ? +h : -1;
+        const newMinuts: number = m != undefined ? +m : -1;
+
+        const newTime = (newHours * 3600) + (newMinuts * 60); 
+
+        const response = await apiClient.post('/sensor/wateringTime', { newTime: newTime, id: sensorId });
+
+        if (response.ok) {
+            showChangeWateringTimePanel.value = false;
+            await getData();
+        }
+    }
+
+    const saveWateringPeriod = async () => {
+        console.log("New watering time: " + selectedWateringPeriod.value);
+      
+        const [h, m] = selectedWateringPeriod.value.split(":");
+        const newHours: number = h != undefined ? +h : -1;
+        const newMinuts: number = m != undefined ? +m : -1;
+
+        const newTime = (newHours * 3600) + (newMinuts * 60); 
+        
+        const response = await apiClient.post('/sensor/wateringPeriod', { newTime: newTime, id: sensorId });
+
+        if (response.ok) {
+            showChangeWateringPeriodPanel.value = false;
+            await getData();
+        }
+    }
+
+    const saveNewThresholds = async () => {
+        const response = await apiClient.post('/sensor/thresholds', { newMin: minThresholdValues.value[0], newMax: minThresholdValues.value[1], id: sensorId });
+
+        if (response.ok) { 
+            showMinThresholdPanel.value = false;
+            await getData();
+        }
+    }
+    
     //STRESS TEST
     // Generate stress‑test data: 360 points, one every 2 minutes over 12 hours
     const start = new Date('2026-08-03T08:00:00');
@@ -64,17 +185,90 @@
         const clamped = Math.min(100, Math.max(0, Math.round(raw * 10) / 10));
         measures.push(clamped);
     }
-    
-    onMounted(() => {
-        valueOk.value = data.lastMeasure > data.minAlert;
-        lastConnection_formatted.value = formatTime();
+    //END OF STRESS TEST
 
-        console.log(lastConnection_formatted.value)
+    const getData = async () => {
+        const response = await apiClient.post('/sensor/info', { id: sensorId });      
+        data.value = response.data as FullSensorInfo;
+        console.log("The data received is ", data.value);
+        lastConnection_formatted.value = formatTime();
+        
+        wateringTime_formatted.value = formatBottomTime(data.value.watering_time);
+        wateringPeriod_formatted.value = formatBottomTime(data.value.watering_period);
+        
+        valueOk.value = data.value.last_measure > data.value.min_alert;
+
+        const minRealValue = data.value.min_alert == 0 ? 0 : (Math.floor((data.value.min_alert / data.value.max_value) * 100) + 1);
+        const maxRealValue = data.value.max_alert == data.value.max_value ? 100 : (Math.floor((data.value.max_alert / data.value.max_value) * 100) + 1);
+
+        minAlertValue.value = minRealValue;
+        
+        minThresholdValues.value = [minRealValue, maxRealValue];
+    }
+    
+    onMounted(async () => {
+        await getData();        
     })
 </script>
 
 <template>
     <BasePage location="sensor">
+        <!-- Floating panel for establishing the watering time -->
+        <FloatingPanel :show="showChangeWateringTimePanel" :hide="() => { showChangeWateringTimePanel = false; }">
+            <div class="floatingPanelContainer">
+                <!-- Floating panel's header -->
+                <div class="floatingPanelHeader">
+                    <h1 class="floatingPanelTitle"> {{t("wateringPanel.wateringTime")}} </h1>
+
+                    <PageButton style="margin-top: 3px;" :iconOnly="true" icon="/icons/Cross.svg" v-on:click="() => { showChangeWateringTimePanel = false; }"></PageButton>
+                </div>
+
+                <div class="floatingPanelContentWrapper">
+                    <p class="marginless timeText" style="margin-bottom: 10px; text-align: justify;"> {{t("wateringPanel.currentWateringConfig")}} {{wateringPeriod_formatted}} </p>
+                    <TimeInput v-model="selectedWateringTime"/>
+
+                    <PageButton style="margin-top: 20px;" v-on:click="saveWateringTime">{{t("all.save")}}</PageButton>
+                </div>
+            </div>
+        </FloatingPanel>
+
+        <!-- Floating panel for establishing the watering preiod -->
+        <FloatingPanel :show="showChangeWateringPeriodPanel" :hide="() => { showChangeWateringPeriodPanel = false; }">
+            <div class="floatingPanelContainer">
+                <!-- Floating panel's header -->
+                <div class="floatingPanelHeader">
+                    <h1 class="floatingPanelTitle"> {{t("wateringPanel.wateringPeriod")}} </h1>
+
+                    <PageButton style="margin-top: 3px;" :iconOnly="true" icon="/icons/Cross.svg" v-on:click="() => { showChangeWateringPeriodPanel = false; }"></PageButton>
+                </div>
+
+                <div class="floatingPanelContentWrapper">
+                    <p class="marginless timeText" style="margin-bottom: 10px; text-align: justify;"> {{t("wateringPanel.currentWateringPeriod")}} {{wateringPeriod_formatted}} </p>
+                    <TimeInput v-model="selectedWateringPeriod"/>
+
+                    <PageButton style="margin-top: 20px;" v-on:click="saveWateringPeriod">{{t("all.save")}}</PageButton>
+                </div>
+            </div>
+        </FloatingPanel>
+
+        <!-- Floating panel for establishing the danger thresholds -->
+        <FloatingPanel :show="showMinThresholdPanel" :hide="() => { showMinThresholdPanel = false; }">
+            <div class="floatingPanelContainer">
+                <!-- Floating panel's header -->
+                <div class="floatingPanelHeader" style="margin-bottom: 20px;">
+                    <h1 class="floatingPanelTitle"> {{t("thresholdPanel.title")}} </h1>
+
+                    <PageButton style="margin-top: 3px;" :iconOnly="true" icon="/icons/Cross.svg" v-on:click="() => { showMinThresholdPanel = false; }"></PageButton>
+                </div>
+
+                <div class="floatingPanelContentWrapper">
+                    <BaseRangeSlide v-model="minThresholdValues" />
+
+                    <PageButton style="margin-top: 20px;" v-on:click="saveNewThresholds">{{t("all.save")}}</PageButton>
+                </div>
+            </div>
+        </FloatingPanel>
+        
     	<!-- Name of the sensor -->
         <BaseDiv class="headerDiv">
             <h1 class="marginless headerText"> {{data.alias != "" ? data.alias : data.name}} </h1>
@@ -84,7 +278,7 @@
         <BaseDiv class="partDiv headerDiv">
             <div class="rowContainer">
                 <div class="leftDiv">
-                    <h1 :class="['marginless', 'lastMeasureCuantity', valueOk ? 'Ok' : 'notOk']"> {{data.lastMeasure}}% </h1>
+                    <h1 :class="['marginless', 'lastMeasureCuantity', valueOk ? 'Ok' : 'notOk']"> {{Math.floor((data.last_measure / data.max_value) * 100)}}% </h1>
                     <p class="marginless"> {{t("sensor.lastMeasure")}} </p>
                 </div>
     
@@ -93,8 +287,8 @@
                     <p class="marginless"> {{t("connection.lastConnection")}} </p>
                 </div>
     
-                <div class="leftDiv">
-                    <h1 :class="['marginless', 'lastMeasureCuantity', 'alert']"> {{data.minAlert}}% </h1>
+                <div class="leftDiv" v-on:click="showMinThresholdPanel = true">
+                    <h1 :class="['marginless', 'lastMeasureCuantity', 'alert']"> {{minAlertValue}}% </h1>
                     <p class="marginless"> {{t("sensor.alert")}} </p>
                 </div>
             </div>
@@ -121,15 +315,15 @@
         <BaseDiv class="headerDiv">
             <h1 class="marginless headerText"> {{t("sensor.wateringSchemes")}} </h1>
 
-            <BaseDiv class="schemesDiv firstScheme">
+            <BaseDiv class="schemesDiv firstScheme" v-on:click="showChangeWateringPeriodPanel = true">
                 <div class="sensorDivArrow clock" />
-                <p class="marginless timeText"> 12 horas y 55 minutos </p>
+                <p class="marginless timeText"> {{wateringPeriod_formatted}} </p>
                 <div class="sensorDivArrow arrow" />
             </BaseDiv>
 
-            <BaseDiv class="schemesDiv lastScheme">
+            <BaseDiv class="schemesDiv lastScheme" v-on:click="showChangeWateringTimePanel = true">
                 <div class="sensorDivArrow wateringCan"/>
-                <p class="marginless timeText"> 12 horas y 55 minutos </p>
+                <p class="marginless timeText"> {{wateringTime_formatted}} </p>
                 <div class="sensorDivArrow arrow" />
             </BaseDiv>
         </BaseDiv>
@@ -202,6 +396,7 @@
 
     .alert {
         color: var(--alert);
+        cursor: pointer;
     }
 
     .lastConnectionLandscape {
@@ -286,5 +481,56 @@
                 font-size: 4dvw;
             }
         }
+    }
+
+    .floatingPanelContainer {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        
+        @media(orientation: portrait) {
+            width: 95dvw;
+        }
+        @media(orientation: landscape) {
+            min-width: 40dvw;
+        }
+    }
+
+    .floatingPanelHeader {
+        box-sizing: border-box;
+        padding-left: 10px;
+        padding-right: 10px;
+        margin-top: 7px;
+        
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        
+        align-items: flex-start;
+        
+        gap: 20px;
+    }
+
+    .floatingPanelTitle {
+        margin: 5px;
+        font-size: 30px;
+    }
+
+    .floatingPanelContentWrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+        max-height: 80dvh;
+        
+        overflow-y: auto;
+        scrollbar-width: none;
+        ::-webkit-scrollbar {display: none;}
     }
 </style>

@@ -24,10 +24,11 @@ const props = defineProps <{
     height: 100dvh;
 
     z-index: 1000000;
-    transition: 0.6s;
+    transition: background 0.6s;
 }
 
 .active {
+    backdrop-filter: blur(3px);
     background-color: #000000b5;
     pointer-events: all;
 }

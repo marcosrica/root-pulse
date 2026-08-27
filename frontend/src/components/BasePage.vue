@@ -50,6 +50,7 @@
         flex-direction: row;
         align-items: center;
         justify-content: center;
+        min-width: 70px;
         
         width: 4%;
         height: 100%;
