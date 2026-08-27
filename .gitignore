@@ -51,3 +51,7 @@ frontend/.env
 
 .zed
 .zed/*
+
+arduino/.gitignore
+arduino/.pio/*
+arduino/src/secrets.h
