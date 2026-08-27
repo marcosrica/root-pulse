@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include <WIFI.h>
+#include <WiFi.h>
 #include "secrets.h"
 
 
@@ -7,6 +7,7 @@ void setup() {
   Serial.begin(115200);
 
   Serial.println("Connecting to WIFI...");
+
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
   while(WiFi.status() != WL_CONNECTED) {
