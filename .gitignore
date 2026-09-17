@@ -55,3 +55,5 @@ frontend/.env
 arduino/.gitignore
 arduino/.pio/*
 arduino/src/secrets.h
+
+arduino/compile_commands.json
