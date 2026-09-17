@@ -22,49 +22,95 @@ void connectToWifi() {
   Serial.println(WiFi.localIP());
 }
 
-void makeGetRequest(String url) {
+HTTPClient startRequest(String url) {
+  //Instance the http client
   HTTPClient http;
+
+  //Getting the server's full url
   String serverUrl = String(SERVER_IP) + url;
-  Serial.printf("Making GET petition to: ");
+  Serial.print("Starting petition to: ");
   Serial.println(serverUrl);
-  http.begin(serverUrl);
 
   //Adding the cookie if present
   if(sessionCookie.length() > 0) {
-    http.addHeader("token", sessionCookie);
+    http.addHeader("sensor-token", sessionCookie);
   }
-  
-  int httpCode = http.GET();
-  Serial.printf("HTTP GET code: %d \n", httpCode);
-  
-  if(httpCode > 0) {
-    //Checking for a set cookie heather
-    String setCookie = http.header("Set-Cookie");
-    if(setCookie.length() > 0) { //There is a cookie to be set
-      // Extract only the "name=value" part
-      // This part lives before the first ";"
-      int semicolonPos = setCookie.indexOf(';');
 
-      if(semicolonPos != -1) {
-        setCookie = setCookie.substring(0, semicolonPos);
-      }
+  //Returning a ready-made client
+  return http;
+}
 
-      //Storing or overwritting the value
-      sessionCookie = setCookie;
+void setCookies(HTTPClient http) {
+  //First check for a set-cookie header
+  String setCookie = http.header("Set-Cookie");
+
+  //There was a cookie to be set with our session
+  if(setCookie.length() > 0) {
+    //We only need the information up until the semicolon
+    int semicolonPos = setCookie.indexOf(';');
+
+    //Checking if there was indeed a semicolon
+    if(semicolonPos != -1) {
+      //Storing the cookie for future queries
+      sessionCookie = setCookie.substring(0, semicolonPos);
       Serial.println("Cookie saved: " + sessionCookie);
     }
+  }
+}
+
+void makeGetRequest(String url) {
+  //Setting up the HTTP client
+  HTTPClient http = startRequest(url);
+
+  //Making the petition
+  int httpCode = http.GET();
+  Serial.printf("HTTP GET code: %d \n", httpCode);
+
+  //Checking if everything went fine
+  if(httpCode > 0) {
+    //Setting the possible cookies returned
+    setCookies(http);
     
     //If the response is OK, read the payload
     if(httpCode == 200) {
       String payload = http.getString();
-      Serial.println("Response payload:");
-      Serial.println(payload);
+      Serial.println("Response payload:" + payload);
     }
   }
   else {
+    //Something failed in the request process
     Serial.printf("GET request failed, error: %s \n", http.errorToString(httpCode).c_str());
   }
 
+  //Close the connection
+  http.end();
+}
+
+void makePostRequest(String url, String body) {
+  //Setting up the HTTP client
+  HTTPClient http = startRequest(url);
+
+  //Making the petition
+  int httpCode = http.POST(body);
+  Serial.printf("HTTP POST response code: %d \n", httpCode);
+
+  //Checking if everything went fine
+  if(httpCode > 0) {
+    //Setting the possible cookies returned
+    setCookies(http);
+
+    //If the response is OK, read the payload
+    if(httpCode == 200) {
+      String payload = http.getString();
+      Serial.println("POST payload: " + payload);
+    }
+  }
+  else {
+    //Something failed in the request process
+    Serial.printf("POST request failed. Error: %s \n", http.errorToString(httpCode).c_str());
+  }
+
+  //Close the connection
   http.end();
 }
 
