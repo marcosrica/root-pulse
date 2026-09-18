@@ -29,6 +29,12 @@ interface userRow extends RowDataPacket {
   password: string;
 };
 
+interface sensorRow extends RowDataPacket {
+  id: number,
+  name: string,
+  password: string,
+}
+
 // { atributos que tiene ResutlSetheader
 //   fieldCount: 0,
 //   affectedRows: 1,      
@@ -210,6 +216,15 @@ export class UsersDatabase {
 }
 
 export class SensorsDatabase {
+  async findByName(sensorName: string): Promise<sensorRow | null> {
+    //Guardamos en un array el resultado de la busqueda por nombre de usuario
+    const [row] = await pool.query<sensorRow[]>(
+      `SELECT id, name, password FROM sensors WHERE name = ?`, [sensorName]
+    );
+    //Devolvemos la primera coincidencia si hay alguna y si no null
+    return row.length ? row[0] : null;
+  }
+  
   //Checking if a sensor's credentials are valid
   async sensorExists(sensorName: string, sensorPassword: string): Promise<number> {
     let id: number = -1;
