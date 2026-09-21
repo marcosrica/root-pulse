@@ -5,6 +5,11 @@
 
 String sessionCookie = "";
 
+int minAlert = -1;
+int maxAlert = -1;
+int wateringPeriod = -1;
+int wateringTime = -1;
+
 void connectToWifi() {
   Serial.println("Connecting to WIFI...");
 
@@ -45,6 +50,46 @@ void parseToken(String payload) {
   //Then, remove the last noisy characters and store the cookie
   int lastCommas = halfPayload.indexOf('"');
   sessionCookie = halfPayload.substring(0, lastCommas);
+}
+
+void setData(String tag, String data) {
+  int parsedData = data.toInt();
+
+  if(tag == "max_alert") {
+    maxAlert = parsedData;
+  }
+  else if(tag == "min_alert") {
+    minAlert = parsedData;
+  }
+  else if(tag == "watering_period") {
+    wateringPeriod = parsedData;
+  }
+  else if(tag == "watering_time") {
+    wateringTime = parsedData;
+  }
+}
+
+void getStatus(String payload) {
+  //Current payload: {"max_value":1024,"min_alert":950,"max_alert":1000,"watering_period":36005,"watering_time":3601}
+
+  int data = payload.indexOf('"');
+  while (data != -1) {
+    //Extract the first name
+    payload = payload.substring(data + 1);
+
+    data = payload.indexOf('"');
+    String name = payload.substring(0, data);
+    payload = payload.substring(data + 2);
+
+    data = payload.indexOf(',');
+    if(data == -1) { data = payload.indexOf('}'); }
+    String value = payload.substring(0, data);
+
+    payload = payload.substring(data);
+    setData(name, value);
+    
+    data = payload.indexOf('"');
+  }
 }
 
 void makeGetRequest(String url) {
@@ -119,5 +164,7 @@ void loop() {
   String body = "{ \"token\": \"" + String(sessionCookie) + "\" }";  
   String payload = "";
   makePostRequest(payload, "/controller/status", body);
+  getStatus(payload);
+  
   delay(500);
 }
