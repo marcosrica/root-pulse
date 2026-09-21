@@ -24,7 +24,7 @@ export const errorHandler = (error: any, req: Request, res: Response, next: Next
   };
 
   //If the error is not of any of our define errors we keep it and response
-  user.error('Unhandled error', error);
+  user.error(error);
   return res.status(500).json({
     cause: "Internal server error",
   });

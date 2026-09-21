@@ -18,8 +18,11 @@ type sensorLoginData = {
 }
 
 const sensorLogin = async (req: Request, res: Response, next: NextFunction) => {
+  console.log(req.body);
   const {name, password}: {name: string, password: string} = req.body;
 
+  console.log("Sensor wants to auth");
+  
   try {
     //Trying to execute the service of loging an user and if anything went bad we can catch it
     const tryLogin = await sensorExecute({ name: name, password: password });
@@ -31,13 +34,10 @@ const sensorLogin = async (req: Request, res: Response, next: NextFunction) => {
       maxAge: 3 * 60 * 60 * 1000 //cookie duration (3 hours)
     });
 
-    return res.status(200).json({ response: "sensor logged in correctly",
-      id: tryLogin.id,
-      username: tryLogin.name,
-    });
+    return res.status(200).json({ token: tryLogin.token, });
 
   } catch (error) {
-    next(error);
+    console.error("SOmething went wrong when authing a sensor: " + error);
   }
 };
 
@@ -50,6 +50,8 @@ async function sensorExecute(data: sensorLoginData): Promise<sensorLoginResponse
   const existingU = await db.findByName(data.name.toLowerCase());
   if(!existingU) throw new ExistenceError('NO_USERNAME_FOUND','There is no account with this username');
 
+  console.log(existingU);
+  
   //Checking if the provided password matches the one stored in the database
   //Using bcrypt to compare a plain text password against a hashed password
   const isValid = await bcrypt.compare(data.password, existingU.password);
