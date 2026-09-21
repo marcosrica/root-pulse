@@ -22,55 +22,42 @@ void connectToWifi() {
   Serial.println(WiFi.localIP());
 }
 
-HTTPClient startRequest(String url) {
-  //Instance the http client
-  HTTPClient http;
-
-  //Getting the server's full url
+void startRequest(HTTPClient &http, String url) {
+    //Getting the server's full url
   String serverUrl = String(SERVER_IP) + url;
   Serial.print("Starting petition to: ");
   Serial.println(serverUrl);
 
+  //Starting the connection
+  http.begin(serverUrl);
+  
   //Adding the cookie if present
   if(sessionCookie.length() > 0) {
     http.addHeader("sensor-token", sessionCookie);
   }
-
-  //Returning a ready-made client
-  return http;
 }
 
-void setCookies(HTTPClient http) {
-  //First check for a set-cookie header
-  String setCookie = http.header("Set-Cookie");
+void parseToken(String payload) {
+  //First, remove the first half of the payload
+  int colonPos = payload.indexOf(':');
+  String halfPayload = payload.substring(colonPos + 2);
 
-  //There was a cookie to be set with our session
-  if(setCookie.length() > 0) {
-    //We only need the information up until the semicolon
-    int semicolonPos = setCookie.indexOf(';');
-
-    //Checking if there was indeed a semicolon
-    if(semicolonPos != -1) {
-      //Storing the cookie for future queries
-      sessionCookie = setCookie.substring(0, semicolonPos);
-      Serial.println("Cookie saved: " + sessionCookie);
-    }
-  }
+  //Then, remove the last noisy characters and store the cookie
+  int lastCommas = halfPayload.indexOf('"');
+  sessionCookie = halfPayload.substring(0, lastCommas);
 }
 
 void makeGetRequest(String url) {
   //Setting up the HTTP client
-  HTTPClient http = startRequest(url);
+  HTTPClient http;
+  startRequest(http, url);
 
   //Making the petition
   int httpCode = http.GET();
   Serial.printf("HTTP GET code: %d \n", httpCode);
 
   //Checking if everything went fine
-  if(httpCode > 0) {
-    //Setting the possible cookies returned
-    setCookies(http);
-    
+  if(httpCode > 0) {    
     //If the response is OK, read the payload
     if(httpCode == 200) {
       String payload = http.getString();
@@ -86,9 +73,13 @@ void makeGetRequest(String url) {
   http.end();
 }
 
-void makePostRequest(String url, String body) {
+void makePostRequest(String &payload, String url, String body) {
   //Setting up the HTTP client
-  HTTPClient http = startRequest(url);
+  HTTPClient http;
+  startRequest(http, url);
+
+  //Adding a header so that the body will be read
+  http.addHeader("Content-Type", "application/json");
 
   //Making the petition
   int httpCode = http.POST(body);
@@ -96,12 +87,9 @@ void makePostRequest(String url, String body) {
 
   //Checking if everything went fine
   if(httpCode > 0) {
-    //Setting the possible cookies returned
-    setCookies(http);
-
     //If the response is OK, read the payload
     if(httpCode == 200) {
-      String payload = http.getString();
+      payload = http.getString();
       Serial.println("POST payload: " + payload);
     }
   }
@@ -118,9 +106,16 @@ void setup() {
   Serial.begin(115200);
 
   connectToWifi();
+
+  String body = "{ \"name\": \"" + String(SENSOR_NAME) + "\", \"password\": \"" + String(SENSOR_PASSWORD) + "\" }";
+  Serial.println("Making starting auth petition");
+
+  String authPayload = "";
+  makePostRequest(authPayload, "/auth/sensor", body);
+  parseToken(authPayload);
 }
 
 void loop() {
-  makeGetRequest("/health");
+  makeGetRequest("/sensor/health");
   delay(500);
 }
