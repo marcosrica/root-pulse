@@ -12,7 +12,7 @@ const TIME = process.env.JWT_EXPIRES_IN || '1h';
 //que ser informacion que no se vaya a cambiar regularmente
 export const generateToken = (payload: tokenInfo): string => {
   //problemas con los argumentos al intentar poner TIME
-return jwt.sign(payload, SECRET_SEED, { expiresIn: '1d'});
+  return jwt.sign(payload, SECRET_SEED, { expiresIn: '1d'});
 };
 
 export const verifyToken = (token: string): tokenInfo => {

@@ -35,9 +35,8 @@ const sensorLogin = async (req: Request, res: Response, next: NextFunction) => {
     });
 
     return res.status(200).json({ token: tryLogin.token, });
-
   } catch (error) {
-    console.error("SOmething went wrong when authing a sensor: " + error);
+    console.error("Something went wrong when authing a sensor: " + error);
   }
 };
 

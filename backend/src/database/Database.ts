@@ -216,6 +216,7 @@ export class UsersDatabase {
 }
 
 export class SensorsDatabase {
+  //Checking if a sensor exists based on its name
   async findByName(sensorName: string): Promise<sensorRow | null> {
     //Guardamos en un array el resultado de la busqueda por nombre de usuario
     const [row] = await pool.query<sensorRow[]>(
@@ -295,6 +296,31 @@ export class SensorsDatabase {
     }
   } 
 
+  async getSensorStatus(sensorId: number): Promise<fullSensorInfo | undefined> {
+    const [sensorResponse] = await pool.query<fullSensorTableInfo[]>(`
+      SELECT name, max_value, min_alert, max_alert, watering_period, watering_time, lastConnection FROM sensors
+      WHERE id = ?
+      `, [sensorId]);
+
+    if (sensorResponse.length > 0) {
+      return {
+        id: sensorId,
+        name: sensorResponse[0].name,
+        alias: "",
+        lastConnection: new Date,
+        last_measure: 0,
+        max_value: sensorResponse[0].max_value,
+        min_alert: sensorResponse[0].min_alert,
+        max_alert: sensorResponse[0].max_alert,
+        watering_period: sensorResponse[0].watering_period,
+        watering_time: sensorResponse[0].watering_time,
+      }
+    }
+    else {
+      return undefined;
+    }
+  }
+  
   async getMaxValue(sensorId: number) {
     let maxValue: number = -1;
     const [result] = await pool.query<({ id: number } & RowDataPacket)[]>(
