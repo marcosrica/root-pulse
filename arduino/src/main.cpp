@@ -116,6 +116,8 @@ void setup() {
 }
 
 void loop() {
-  makeGetRequest("/sensor/health");
+  String body = "{ \"token\": \"" + String(sessionCookie) + "\" }";  
+  String payload = "";
+  makePostRequest(payload, "/controller/status", body);
   delay(500);
 }

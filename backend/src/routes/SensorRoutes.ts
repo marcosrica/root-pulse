@@ -7,6 +7,6 @@ SensorRoutes.post('/info', getSensorInfo);
 SensorRoutes.post('/wateringTime', changeWateringTime);
 SensorRoutes.post('/wateringPeriod', changeWateringPeriod);
 SensorRoutes.post('/thresholds', changeThresholds);
-SensorRoutes.get('/health', TestSensorConnection);
+SensorRoutes.post('/health', TestSensorConnection);
 
 export default SensorRoutes;

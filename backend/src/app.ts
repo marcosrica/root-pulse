@@ -6,6 +6,7 @@ import { authentication, errorHandler } from './middleware';
 import cookieParser from 'cookie-parser';
 import UserRoutes from './routes/UserRoutes';
 import SensorRoutes from './routes/SensorRoutes';
+import ControllerRoutes from './routes/ControllerRoutes';
 
 //Creating the app
 const app:Application = express();
@@ -23,6 +24,10 @@ app.use(cookieParser());
 
 //authorization  routes / public routes, no authentication needed
 app.use('/api/auth', AuthRoutes);
+
+//Microcontroller routes work with a token embedded in the body, so no middleware needed
+app.use('/api/controller', ControllerRoutes);
+
 //Health check endpoint
 app.get('/health', (req, res) => {
     res.json({status:'OK', timestamp: new Date().toISOString()});
