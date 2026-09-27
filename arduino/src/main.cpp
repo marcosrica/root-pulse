@@ -70,8 +70,6 @@ void setData(String tag, String data) {
 }
 
 void getStatus(String payload) {
-  //Current payload: {"max_value":1024,"min_alert":950,"max_alert":1000,"watering_period":36005,"watering_time":3601}
-
   int data = payload.indexOf('"');
   while (data != -1) {
     //Extract the first name
@@ -147,6 +145,16 @@ void makePostRequest(String &payload, String url, String body) {
   http.end();
 }
 
+void sendMeasure(int value) {
+  String body =  "{ \"token\": \"" + String(sessionCookie) + "\", \"measure\": \"" + value + "\" }";  
+  String payload = "";
+
+  makePostRequest(payload, "/controller/measure", body);
+
+  Serial.print("Result from measurement adding: ");
+  Serial.println(payload);
+}
+
 void setup() {
   Serial.begin(115200);
 
@@ -165,6 +173,8 @@ void loop() {
   String payload = "";
   makePostRequest(payload, "/controller/status", body);
   getStatus(payload);
+
+  sendMeasure(20);
   
   delay(500);
 }
