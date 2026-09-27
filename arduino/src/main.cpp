@@ -9,6 +9,7 @@ int minAlert = -1;
 int maxAlert = -1;
 int wateringPeriod = -1;
 int wateringTime = -1;
+int maxValue = 2048;
 
 void connectToWifi() {
   Serial.println("Connecting to WIFI...");
@@ -174,7 +175,7 @@ void loop() {
   makePostRequest(payload, "/controller/status", body);
   getStatus(payload);
 
-  sendMeasure(20);
+  sendMeasure(random(0, maxValue));
   
   delay(500);
 }
