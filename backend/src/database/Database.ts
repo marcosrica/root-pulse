@@ -373,4 +373,14 @@ export class SensorsDatabase {
 
     return (response1.affectedRows > 0) && (response2.affectedRows > 0);
   }
+
+  //Adding a new measure to the DB
+  async addMeasure(sensorId: number, measure: number): Promise<boolean> {
+    const [result] = await pool.query<ResultSetHeader>(`
+      INSERT INTO measures (sensor_id, value)
+      VALUES (?, ?)
+      `, [sensorId, measure]);
+    
+    return result.affectedRows > 0;
+  }
 }

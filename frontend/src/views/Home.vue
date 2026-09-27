@@ -38,10 +38,10 @@
     }
     
     //Change to check a specific sensor
-    const checkSensor = (sensorId:string) => {
+    let checkSensor = (sensorId:string) => {
         location.href = "/sensor?id=" + sensorId;
     }
-
+    
     const getConnectedSensors = async (instant:boolean) => {
         //Calling the backend. UserId will be added in the token
         try {

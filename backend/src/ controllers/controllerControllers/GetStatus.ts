@@ -11,9 +11,7 @@ const getSensorStatus = async (req: Request, res: Response, next: NextFunction) 
     console.log(verifiedToken);
 
     const info = await db.getSensorStatus(verifiedToken.id);
-    if (info) {
-      console.log(info);
-      
+    if (info) {      
       const data:any = {
         min_alert: info.min_alert,
         max_alert: info.max_alert,
