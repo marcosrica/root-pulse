@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { UsersDatabase, SensorsDatabase } from '../../database/Database';
-
+import bcrypt from 'bcrypt';
 
 const addSensor = async (req: Request, res: Response, next: NextFunction) => {
   const data: { name: string, password: string } = req.body;
@@ -11,19 +11,26 @@ const addSensor = async (req: Request, res: Response, next: NextFunction) => {
     //The user is authenticated, and hasn't bypassed the protection layers
     //Now checking if sensor credentials are right
     const SensorsDb: SensorsDatabase = new SensorsDatabase();
-    const sensorId: number = await SensorsDb.sensorExists(data.name, data.password);
+    const sensorData = await SensorsDb.sensorExists(data.name);
 
-    if (sensorId != -1) {
-      //Sensor credentials are fine. Proceeding to connect the user and the sensor
-      const usersDb: UsersDatabase = new UsersDatabase();
-      const insertionResult: boolean = await usersDb.addConnection(userId, sensorId, true);
+    if (sensorData) {
+      const samePassword = await bcrypt.compare(data.password, sensorData?.password);
 
-      //Checking if insertion went correctly, or if something went wrong in the process
-      if (insertionResult) {
-        return res.status(200).send("OK");
-      }
+      if (samePassword) {
+        //Sensor credentials are fine. Proceeding to connect the user and the sensor
+        const usersDb: UsersDatabase = new UsersDatabase();
+        const insertionResult: boolean = await usersDb.addConnection(userId, sensorData.id, true);
+        
+        //Checking if insertion went correctly, or if something went wrong in the process
+        if (insertionResult) {
+          return res.status(200).send("OK");
+          }
+        else {
+          return res.status(500).json({ cause: "Internal server error" });
+          }
+        }
       else {
-        return res.status(500).json({ cause: "Internal server error" });
+        return res.status(401).json({ cause: "Incorrect sensor credentials" });
       }
     }
     else {

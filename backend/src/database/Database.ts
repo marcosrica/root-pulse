@@ -227,17 +227,19 @@ export class SensorsDatabase {
   }
   
   //Checking if a sensor's credentials are valid
-  async sensorExists(sensorName: string, sensorPassword: string): Promise<number> {
-    let id: number = -1;
+  async sensorExists(sensorName: string): Promise<{id:number, password:string} | undefined> {
     const [result] = await pool.query<({ id: number } & RowDataPacket)[]>(
-      `SELECT id FROM sensors WHERE name = ? AND password = ?`, [sensorName, sensorPassword]
+      `SELECT id, password FROM sensors WHERE name = ?`, [sensorName]
     );
 
     if (result.length > 0) {
-      id = result[0].id;
+      return {
+        id: result[0].id,
+        password: result[0].password,
+      }
     }
 
-    return id;
+    return undefined;
   }
 
   //Getting the id of a sensor given its name
