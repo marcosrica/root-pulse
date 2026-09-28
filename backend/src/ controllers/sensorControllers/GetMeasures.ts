@@ -23,7 +23,7 @@ const GetMeasures = async (req: Request, res: Response, next: NextFunction) => {
         return res.status(500).json({ cause: "Internal server error " });
       } 
       else {
-        return res.status(200).json(result);
+        return res.status(200).json([...result].reverse());
       }
     }
     else {

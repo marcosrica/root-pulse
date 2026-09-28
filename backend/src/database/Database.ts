@@ -6,6 +6,7 @@ import { Pool } from 'mysql2/typings/mysql/lib/Pool';
 import { UserInfo } from '../interfaces/UserInfo';
 import { fullSensorInfo, fullSensorTableInfo } from '../interfaces/FullSensorInfo';
 import { measure } from '../interfaces/Measure';
+import { getLastMeasure } from '../ controllers/sensorControllers';
 dotenv.config();
 
 const user = process.env.DB_USER;
@@ -105,6 +106,8 @@ export class UsersDatabase {
     let result: SensorConnectionInfo[] = [];
     console.log("Connections: ", connections);
 
+    const sDB = new SensorsDatabase();
+    
     //Cycling through all the connected sensors
     for (let i = 0; i < connections.length; i++) {
       const ID: number = connections[i].sensor_id;
@@ -126,13 +129,12 @@ export class UsersDatabase {
       console.log(sensor);
       console.log(connection);
       
-      
       //Compiling the data into a SensorConnectionInfo object
       const row: SensorConnectionInfo = {
         id: ID,
         name: sensor[0].name,
         alias: connection[0].alias,
-        lastMeasure: Math.floor(Math.random() * sensor[0].max_value),
+        lastMeasure: await sDB.getLastMeasure(ID),
         minAlert: sensor[0].min_alert,
         maxValue: sensor[0].max_value,
         lastConnection: sensor[0].last_connection,
@@ -286,7 +288,7 @@ export class SensorsDatabase {
         name: sensorResponse[0].name,
         alias: aliasResponse[0].alias,
         lastConnection: sensorResponse[0].lastConnection,
-        last_measure: sensorResponse[0].max_value * 0.65,
+        last_measure: await this.getLastMeasure(sensorId),
         max_value: sensorResponse[0].max_value,
         min_alert: sensorResponse[0].min_alert,
         max_alert: sensorResponse[0].max_alert,
@@ -318,6 +320,11 @@ export class SensorsDatabase {
     let measures: measure[] = [];
     console.log("Getting measures for sensor: " + sensorId);
 
+    const maxValRes = await pool.query(`
+      SELECT max_value FROM sensors
+      WHERE id = ?`, [sensorId]);
+    const maxVal = maxValRes[0][0].max_value;
+    
     const response = await pool.query(`
       select value, measured_at from measures
       WHERE sensor_id = ?
@@ -325,7 +332,7 @@ export class SensorsDatabase {
       LIMIT 300;`, [sensorId]);
 
     for (let i = 0; i < response[0].length; i++) {
-      measures.push({ value: response[0][i].value, date: response[0][i].measured_at });
+      measures.push({ value: Math.floor((response[0][i].value / maxVal) * 10000) / 100, date: response[0][i].measured_at });
     }
     
     return measures;
