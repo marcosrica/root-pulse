@@ -299,6 +299,21 @@ export class SensorsDatabase {
     }
   } 
 
+  async getLastMeasure(sensorId: number): Promise<number> {
+    const response = await pool.query(`
+      select value from measures
+      WHERE sensor_id = ?
+      ORDER BY measured_at DESC
+      LIMIT 1;`, [sensorId]);
+    
+    if (response.length > 0) {
+      return response[0][0].value;
+    }
+    else {
+      return -1;
+    }
+  }
+  
   async getLastSensorMeasures(sensorId: number):Promise<measure[]> {
     let measures: measure[] = [];
     console.log("Getting measures for sensor: " + sensorId);
@@ -309,9 +324,7 @@ export class SensorsDatabase {
       ORDER BY measured_at DESC
       LIMIT 300;`, [sensorId]);
 
-    console.log("Selected values: \n", response[0]);
     for (let i = 0; i < response[0].length; i++) {
-      console.log("Value ", i, ": ", response[0][i]);
       measures.push({ value: response[0][i].value, date: response[0][i].measured_at });
     }
     

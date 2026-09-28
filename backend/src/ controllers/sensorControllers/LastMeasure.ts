@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { SensorsDatabase, UsersDatabase } from '../../database/Database';
 
 
-const GetMeasures = async (req: Request, res: Response, next: NextFunction) => {
+const GetLastMeasure = async (req: Request, res: Response, next: NextFunction) => {
   const name = req.body.id;
   console.log(name);
   
@@ -17,13 +17,13 @@ const GetMeasures = async (req: Request, res: Response, next: NextFunction) => {
     if (id != -1) {
       //The sensor exists
       //Getting the measures
-      const result = await db.getLastSensorMeasures(id);
-      
-      if (result == undefined) {
+      const result = await db.getLastMeasure(id);
+
+      if (result == -1) {
         return res.status(500).json({ cause: "Internal server error " });
       } 
       else {
-        return res.status(200).json(result);
+        return res.status(200).json({value: result});
       }
     }
     else {
@@ -35,4 +35,4 @@ const GetMeasures = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export default GetMeasures;
+export default GetLastMeasure;

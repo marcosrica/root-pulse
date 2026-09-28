@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { changeThresholds, changeWateringPeriod, changeWateringTime, getMeasures, getSensorInfo, TestSensorConnection } from '../ controllers/sensorControllers';
+import { changeThresholds, changeWateringPeriod, changeWateringTime, getLastMeasure, getMeasures, getSensorInfo, TestSensorConnection } from '../ controllers/sensorControllers';
 
 const SensorRoutes = Router();
 
@@ -9,5 +9,6 @@ SensorRoutes.post('/wateringPeriod', changeWateringPeriod);
 SensorRoutes.post('/thresholds', changeThresholds);
 SensorRoutes.post('/health', TestSensorConnection);
 SensorRoutes.post('/getMeasures', getMeasures);
+SensorRoutes.post('/lastMeasure', getLastMeasure);
 
 export default SensorRoutes;
