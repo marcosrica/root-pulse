@@ -161,32 +161,20 @@
         }
     }
     
-    //STRESS TEST
-    // Generate stress‑test data: 360 points, one every 2 minutes over 12 hours
-    const start = new Date('2026-08-03T08:00:00');
-    const pointCount = 100;
-    const intervalMinutes = 2; // every 2 minutes → 30 points per hour
-    
-    const dates: string[] = [];
-    const measures: number[] = [];
-    
-    for (let i = 0; i < pointCount; i++) {
-        // Timestamp: start + i * intervalMinutes
-        const time = new Date(start.getTime() + i * intervalMinutes * 60 * 1000);
-        dates.push(time.toISOString());
-      
-        // Value: a daily sinusoid (peak around midday, trough at night) + random noise
-        const hours = time.getHours() + time.getMinutes() / 60; // fractional hour
-        // Sine wave: period 24 hours, peak at 12:00, trough at 0:00
-        const base = 50 + 40 * Math.sin((hours - 6) * Math.PI / 12); // 10–90
-        const noise = (Math.random() - 0.5) * 15; // ±7.5%
-        const raw = base + noise;
-        // Clamp between 0 and 100, round to 1 decimal
-        const clamped = Math.min(100, Math.max(0, Math.round(raw * 10) / 10));
-        measures.push(clamped);
-    }
-    //END OF STRESS TEST
+    const dates = ref<string[]>([]);
+    const measures = ref<number[]>([]);
 
+    const getPoints = async () => {
+        const values = await apiClient.post('/sensor/getMeasures', { id: sensorId });
+        console.log(values);
+        const points: { value: number, date: string }[] = values.data as { value: number, date: string }[]; 
+
+        for (let i = 0; i < points.length; i++) {
+            dates.value.push(points[i]?.date || "");
+            measures.value.push(points[i]?.value || -1);
+        } 
+    }
+    
     const getData = async () => {
         const response = await apiClient.post('/sensor/info', { id: sensorId });      
         data.value = response.data as FullSensorInfo;
@@ -205,8 +193,7 @@
         
         minThresholdValues.value = [minRealValue, maxRealValue];
 
-        const values = await apiClient.post('/sensor/getMeasures', { id: sensorId });
-        console.log(values);
+        getPoints();
     }
     
     onMounted(async () => {
