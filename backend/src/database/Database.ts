@@ -5,6 +5,7 @@ import { connectionInfo_ConnectionDB, SensorConnectionInfo, sensorInfo_Connectio
 import { Pool } from 'mysql2/typings/mysql/lib/Pool';
 import { UserInfo } from '../interfaces/UserInfo';
 import { fullSensorInfo, fullSensorTableInfo } from '../interfaces/FullSensorInfo';
+import { measure } from '../interfaces/Measure';
 dotenv.config();
 
 const user = process.env.DB_USER;
@@ -298,6 +299,25 @@ export class SensorsDatabase {
     }
   } 
 
+  async getLastSensorMeasures(sensorId: number):Promise<measure[]> {
+    let measures: measure[] = [];
+    console.log("Getting measures for sensor: " + sensorId);
+
+    const response = await pool.query(`
+      select value, measured_at from measures
+      WHERE sensor_id = ?
+      ORDER BY measured_at DESC
+      LIMIT 300;`, [sensorId]);
+
+    console.log("Selected values: \n", response[0]);
+    for (let i = 0; i < response[0].length; i++) {
+      console.log("Value ", i, ": ", response[0][i]);
+      measures.push({ value: response[0][i].value, date: response[0][i].measured_at });
+    }
+    
+    return measures;
+  }
+  
   async getSensorStatus(sensorId: number): Promise<fullSensorInfo | undefined> {
     const [sensorResponse] = await pool.query<fullSensorTableInfo[]>(`
       SELECT name, max_value, min_alert, max_alert, watering_period, watering_time, lastConnection FROM sensors

@@ -204,6 +204,9 @@
         minAlertValue.value = minRealValue;
         
         minThresholdValues.value = [minRealValue, maxRealValue];
+
+        const values = await apiClient.post('/sensor/getMeasures', { id: sensorId });
+        console.log(values);
     }
     
     onMounted(async () => {
