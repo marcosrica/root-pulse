@@ -302,14 +302,14 @@ export class SensorsDatabase {
   } 
 
   async getLastMeasure(sensorId: number): Promise<number> {
-    const response = await pool.query(`
+    const [response] = await pool.query(`
       select value from measures
       WHERE sensor_id = ?
       ORDER BY measured_at DESC
       LIMIT 1;`, [sensorId]);
     
     if (response.length > 0) {
-      return response[0][0].value;
+      return response[0].value;
     }
     else {
       return -1;
