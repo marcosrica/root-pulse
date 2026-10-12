@@ -26,6 +26,7 @@ sensor.startDate,Start date,Fecha de inicio
 sensor.endDate,End date,Fecha de fin
 sensor.fetch,Fetch,Enviar
 sensor.wateringSchemes,Watering schemes,Patrones de riego
+sensor.measuresInterval,Select interval,Seleccional el intervalo
 
 profile.configuration,Configuration,Configuración
 profile.sensors,Sensors,Sensores
@@ -61,6 +62,9 @@ connection.hoursAndMinutes,{h} hours and {m} minutes,{h} horas y {m} minutos
 connection.hoursMinutesSeconds,"{h} hours, {m} minutes and {s} s","{h} horas, {m} minutos y {s}s
 
 thresholdPanel.title,Alert thresholds,Márgenes de alerta
+
+measureInterval.start,Start date:,Fecha inicial:
+measureInterval.end,End date:,Fecha final:
 
 wateringPanel.wateringPeriod,Watering period,Periodo de riego
 wateringPanel.wateringTime,Watering time,Tiempo de riego

@@ -58,6 +58,9 @@
     //Variables for changing the alert threshold
     const showMinThresholdPanel = ref<boolean>(false);
     const minThresholdValues = ref<number[]>([]);
+
+    //Variables for tracking the interval for the measures  retrieval
+    const showMeasureIntervalPanel = ref<boolean>(false);
     
     //Function that formats a time from Date class into natural language
     const formatTime = (): string => {  
@@ -205,6 +208,32 @@
 
 <template>
     <BasePage location="sensor">
+        <!-- Floating panel for establishing the measures time interval -->
+        <FloatingPanel :show="showMeasureIntervalPanel" :hide="() => { showMeasureIntervalPanel = false; }">
+            <div class="floatingPanelContainer">
+                <!-- Floating panel's header -->
+                <div class="floatingPanelHeader">
+                    <h1 class="floatingPanelTitle"> {{t("sensor.measuresInterval")}} </h1>
+
+                    <PageButton style="margin-top: 3px;" :iconOnly="true" icon="/icons/Cross.svg" v-on:click="() => { showMeasureIntervalPanel = false; }"></PageButton>
+                </div>
+
+                <div class="floatingPanelContentWrapper">
+                    <div class="IntervalDateInputPanel">
+                        <p class="marginless timeText" style="text-align: center; width: 50%; margin: 0px; margin-bottom: 5px;"> {{t("measureInterval.start")}} </p>
+                        <DateInput></DateInput>
+                    </div>
+
+                    <div class="IntervalDateInputPanel" style="margin-top: 20px;">
+                        <p class="marginless timeText" style="text-align: justify; margin-top: 20px; margin: 0px; margin-bottom: 5px;"> {{t("measureInterval.end")}} </p>
+                        <DateInput></DateInput>
+                    </div>
+
+                    <PageButton style="margin-top: 20px;" v-on:click="saveWateringPeriod">{{t("all.save")}}</PageButton>
+                </div>
+            </div>
+        </FloatingPanel>
+        
         <!-- Floating panel for establishing the watering time -->
         <FloatingPanel :show="showChangeWateringTimePanel" :hide="() => { showChangeWateringTimePanel = false; }">
             <div class="floatingPanelContainer">
@@ -226,7 +255,7 @@
                 <DateInput></DateInput>
             </div>
         </FloatingPanel>
-
+        
         <!-- Floating panel for establishing the watering preiod -->
         <FloatingPanel :show="showChangeWateringPeriodPanel" :hide="() => { showChangeWateringPeriodPanel = false; }">
             <div class="floatingPanelContainer">
@@ -298,7 +327,7 @@
         <BaseDiv class="headerDiv paddingless">
             <div class="graphHeader">
                	<h1 class="marginless headerText" style="margin-top: 10px;"> {{t("sensor.graph")}} </h1>
-                <PageButton :iconOnly="true" icon="/icons/Filter.svg" v-on:click="() => {  }"></PageButton>
+                <PageButton :iconOnly="true" icon="/icons/Filter.svg" v-on:click="() => { showMeasureIntervalPanel = true; }"></PageButton>
             </div>
         	<Chart
        			:xData="dates"
@@ -527,5 +556,22 @@
         overflow-y: auto;
         scrollbar-width: none;
         ::-webkit-scrollbar {display: none;}
+    }
+
+    .IntervalDateInputPanel {
+        display: flex;
+        flex-direction: column;
+        width: 90%;
+
+        justify-content: space-between;
+        align-items: center;
+
+        @media(orientation: portrait) {
+            flex-direction: column;
+        }
+
+        @media(max-width: 1600px) {
+            flex-direction: column;
+        }
     }
 </style>
