@@ -13,6 +13,7 @@
     import FloatingPanel from '@/components/FloatingPanel.vue';
     import TimeInput from '@/components/TimeInput.vue';
     import BaseRangeSlide from '@/components/BaseRangeSlide.vue';
+    import DateInput from '@/components/DateInput.vue';
     
     //Library for easy translation features
     const { t } = useI18n();
@@ -23,15 +24,16 @@
     
     //Full data of the sensor being inspected
     let data = ref<FullSensorInfo>({
-        name: "Sensor1",
+        name: "Cargando",
         alias: "",
-        last_measure: 55,
-        min_alert: 30,
-        lastConnection: new Date('August 3, 2026 04:28:00'),
+        last_measure: 0,
+        min_alert: 0,
+        max_alert: 0,
+        lastConnection: new Date(Date.now()),
         id: 0,
-        watering_period: 100,
-        watering_time: 100,
-        max_value: 100
+        watering_period: 0,
+        watering_time: 0,
+        max_value: 0
     });
 
     //Start and end date of the data being fetched for the graph
@@ -219,6 +221,9 @@
 
                     <PageButton style="margin-top: 20px;" v-on:click="saveWateringTime">{{t("all.save")}}</PageButton>
                 </div>
+
+                
+                <DateInput></DateInput>
             </div>
         </FloatingPanel>
 
