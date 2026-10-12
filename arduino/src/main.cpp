@@ -29,7 +29,7 @@ void connectToWifi() {
 }
 
 void startRequest(HTTPClient &http, String url) {
-    //Getting the server's full url
+  //Getting the server's full url
   String serverUrl = String(SERVER_IP) + url;
   Serial.print("Starting petition to: ");
   Serial.println(serverUrl);
@@ -117,7 +117,9 @@ void makeGetRequest(String url) {
   http.end();
 }
 
-void makePostRequest(String &payload, String url, String body) {
+String makePostRequest(String url, String body) {
+  String payload;
+  
   //Setting up the HTTP client
   HTTPClient http;
   startRequest(http, url);
@@ -144,13 +146,13 @@ void makePostRequest(String &payload, String url, String body) {
 
   //Close the connection
   http.end();
+
+  return payload;
 }
 
 void sendMeasure(int value) {
   String body =  "{ \"token\": \"" + String(sessionCookie) + "\", \"measure\": \"" + value + "\" }";  
-  String payload = "";
-
-  makePostRequest(payload, "/controller/measure", body);
+  String payload = makePostRequest("/controller/measure", body);
 
   Serial.print("Result from measurement adding: ");
   Serial.println(payload);
@@ -164,15 +166,13 @@ void setup() {
   String body = "{ \"name\": \"" + String(SENSOR_NAME) + "\", \"password\": \"" + String(SENSOR_PASSWORD) + "\" }";
   Serial.println("Making starting auth petition");
 
-  String authPayload = "";
-  makePostRequest(authPayload, "/auth/sensor", body);
+  String authPayload = makePostRequest("/auth/sensor", body);
   parseToken(authPayload);
 }
 
 void loop() {
   String body = "{ \"token\": \"" + String(sessionCookie) + "\" }";  
-  String payload = "";
-  makePostRequest(payload, "/controller/status", body);
+  String payload = makePostRequest("/controller/status", body);
   getStatus(payload);
 
   sendMeasure(random(0, maxValue));
