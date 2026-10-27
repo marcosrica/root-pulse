@@ -337,6 +337,28 @@ export class SensorsDatabase {
     
     return measures;
   }
+
+  //Retrieving measures that are between certain dates
+  async getMeasures_Date(sensorId: number, startDate: string, endDate: string): Promise<measure[]> {
+    let measures: measure[] = [];
+    console.log("Getting measures for sensor: " + sensorId);
+    
+    const maxValRes = await pool.query(`
+      SELECT max_value FROM sensors
+      WHERE id = ?`, [sensorId]);
+    const maxVal = maxValRes[0][0].max_value;
+
+    const response = await pool.query(`
+      select value, measured_at from measures
+      WHERE sensor_id = ? AND measured_at BETWEEN ? AND ?
+      ORDER BY measured_at DESC`, [sensorId, startDate, endDate]);
+
+    for (let i = 0; i < response[0].length; i++) {
+      measures.push({ value: Math.floor((response[0][i].value / maxVal) * 10000) / 100, date: response[0][i].measured_at });
+    }
+    
+    return measures;
+  }
   
   async getSensorStatus(sensorId: number): Promise<fullSensorInfo | undefined> {
     const [sensorResponse] = await pool.query<fullSensorTableInfo[]>(`
