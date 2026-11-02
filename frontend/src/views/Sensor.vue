@@ -183,6 +183,8 @@
                         measures.value.push(points[i]?.value || -100);
                     }
                 } 
+
+                showMeasureIntervalPanel.value = false;
             }
         }
     }
