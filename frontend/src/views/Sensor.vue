@@ -279,9 +279,6 @@
 
                     <PageButton style="margin-top: 20px;" v-on:click="saveWateringTime">{{t("all.save")}}</PageButton>
                 </div>
-
-                
-                <DateInput></DateInput>
             </div>
         </FloatingPanel>
         
