@@ -1,46 +1,46 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+    import { ref } from 'vue'
 
-const props = withDefaults(defineProps<{
-  modelValue?: string      // always YYYY-MM-DD
-  label?: string
-  min?: string
-  max?: string
-  disabled?: boolean
-  required?: boolean
-  error?: string
-  helperText?: string
-  name?: string
-}>(), {
-  modelValue: '',
-  disabled: false,
-  required: false
-})
+    const props = withDefaults(defineProps<{
+        modelValue?: string      // always YYYY-MM-DD
+        label?: string
+        min?: string
+        max?: string
+        disabled?: boolean
+        required?: boolean
+        error?: string
+        helperText?: string
+        name?: string
+    }>(), {
+        modelValue: '',
+        disabled: false,
+        required: false
+    });
 
-const emit = defineEmits<{
-  'update:modelValue': [value: string]
-  change: [value: string]
-  focus: [event: FocusEvent]
-  blur: [event: FocusEvent]
-}>()
+    const emit = defineEmits<{
+        'update:modelValue': [value: string]
+        change: [value: string]
+        focus: [event: FocusEvent]
+        blur: [event: FocusEvent]
+    }>();
 
-const inputRef = ref<HTMLInputElement | null>(null)
+    const inputRef = ref<HTMLInputElement | null>(null)
 
-const onInput = (event: Event) => {
-  emit('update:modelValue', (event.target as HTMLInputElement).value)
-}
+    const onInput = (event: Event) => {
+        emit('update:modelValue', (event.target as HTMLInputElement).value)
+    }
 
-const onChange = (event: Event) => {
-  emit('change', (event.target as HTMLInputElement).value)
-}
+    const onChange = (event: Event) => {
+        emit('change', (event.target as HTMLInputElement).value)
+    }
+    
+    const onFocus = (event: FocusEvent) => emit('focus', event)
+    const onBlur = (event: FocusEvent) => emit('blur', event)
 
-const onFocus = (event: FocusEvent) => emit('focus', event)
-const onBlur = (event: FocusEvent) => emit('blur', event)
-
-// Optional: open the native picker programmatically where supported
-const openPicker = () => {
-  inputRef.value?.showPicker?.()
-}
+    // Optional: open the native picker programmatically where supported
+    const openPicker = () => {
+        inputRef.value?.showPicker?.()
+    }
 </script>
 
 <template>

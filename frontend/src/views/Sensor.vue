@@ -165,6 +165,27 @@
             await getData();
         }
     }
+
+    const saveWateringInterval = async () => {
+        //Checking that both dates are non-empty
+        if (startDate.value != "" && endDate.value != "") {
+            //Asking the backend for the data
+            const response = await apiClient.post("/sensor/getMeasuresInTimeFrame", { id: sensorId, start: startDate.value, end: endDate.value });
+            if (response.status == 200) {
+                dates.value = [];
+                measures.value = [];
+            
+                const points: { value: number, date: string }[] = response.data as { value: number, date: string }[]; 
+            
+                for (let i = 0; i < points.length; i++) {
+                    if (points[i]?.value) {
+                        dates.value.push(points[i]?.date || "");
+                        measures.value.push(points[i]?.value || -100);
+                    }
+                } 
+            }
+        }
+    }
     
     const dates = ref<string[]>([]);
     const measures = ref<number[]>([]);
@@ -174,6 +195,9 @@
         console.log(values);
         const points: { value: number, date: string }[] = values.data as { value: number, date: string }[]; 
 
+        dates.value = [];
+        measures.value = [];
+        
         for (let i = 0; i < points.length; i++) {
             dates.value.push(points[i]?.date || "");
             measures.value.push(points[i]?.value || -1);
@@ -218,18 +242,21 @@
                     <PageButton style="margin-top: 3px;" :iconOnly="true" icon="/icons/Cross.svg" v-on:click="() => { showMeasureIntervalPanel = false; }"></PageButton>
                 </div>
 
+                <!-- Body -->
                 <div class="floatingPanelContentWrapper">
+                    <!-- Start -->
                     <div class="IntervalDateInputPanel">
                         <p class="marginless timeText" style="text-align: center; width: 50%; margin: 0px; margin-bottom: 5px;"> {{t("measureInterval.start")}} </p>
-                        <DateInput></DateInput>
+                        <DateInput v-model="startDate"></DateInput>
                     </div>
 
+                    <!-- End -->
                     <div class="IntervalDateInputPanel" style="margin-top: 20px;">
                         <p class="marginless timeText" style="text-align: justify; margin-top: 20px; margin: 0px; margin-bottom: 5px;"> {{t("measureInterval.end")}} </p>
-                        <DateInput></DateInput>
+                        <DateInput v-model="endDate"></DateInput>
                     </div>
 
-                    <PageButton style="margin-top: 20px;" v-on:click="saveWateringPeriod">{{t("all.save")}}</PageButton>
+                    <PageButton style="margin-top: 20px;" v-on:click="saveWateringInterval">{{t("all.save")}}</PageButton>
                 </div>
             </div>
         </FloatingPanel>
